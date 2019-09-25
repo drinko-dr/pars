@@ -4,32 +4,33 @@
 
 #include "fillit.h"
 
-int 	solver(int start_row, int start_col, t_shape *tet,int size)
+int 	solver(int **map, t_shape *tet, int size)
 {
 	int 	row;
 	int		col;
-	int 	square_size;
-	int		**map;
 
 	row = 0;
 	col = 0;
-	while (tet)
+	if (tet->next)
 	{
-		while (row < square_size) // заменить на start_row
+		while (col < size) // заменить на start_row
 		{
-			while (col < square_size) // заменит start_col
+			row = 0;
+			while (row < size) // заменит start_col
 			{
-				if (check_place(map, tet, col, row, size)) {
+				if (check_place(map, tet, row, col, size)) {
 					tetramino_set(map, tet, row, col);
-					if (solver(row, col, tet->next, size))
+					if (solver(map, tet->next, size))
 						return (1);
 					tetramino_unset(map, tet, row, col);
 				}
-				col++;
+				row++;
 			}
-			row++;
+			col++;
 		}
 	}
+	if (tet->next)
+		return (0);
 	return (1); // что нужно вернуть ?
 }
 

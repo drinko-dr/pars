@@ -2,7 +2,6 @@
 // Created by Leto Vania on 19/09/2019.
 //
 
-#include "libft/libft.h"
 #include "fillit.h"
 #include <stdio.h>
 
@@ -78,7 +77,7 @@ int check_tetramino(char *str, int ret)
 	return (1);
 }
 
-void		parser(char **file, t_shape **shape)
+int		parser(char **file, t_shape **shape)
 {
 	char 	*buf;
 	int 	fd;
@@ -99,7 +98,8 @@ void		parser(char **file, t_shape **shape)
 		}
 		count++;
 	}
-	free(buf);
+	// free(buf);
 	close(fd);
+	return (count);
 }
 

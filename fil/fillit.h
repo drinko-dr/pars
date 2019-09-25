@@ -4,8 +4,10 @@
 
 #ifndef FILLIT_H
 # define FILLIT_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
 
-#include "libft/libft.h"
 typedef struct			s_termito
 {
 	char 				alpha;
@@ -20,7 +22,7 @@ typedef struct			s_shape
 	struct s_shape		*next;
 }						t_shape;
 
-void					parser(char **file, t_shape **shape);
+int						parser(char **file, t_shape **shape);
 void 					map_del(int **map);
 int 					check_place (int **map, t_shape *tetramino, int x, int y, int size);
 void 					tetramino_set(int **map, t_shape *tetramino, int x, int y);
@@ -34,6 +36,7 @@ t_shape					*creat_new_list(void);
 int 					**map_create(int size);
 int						**map_fill_zero(void);
 void 					map_change_to_letter(int **map, int size);
+int 					solver(int **map, t_shape *tet, int size);
 
 
 
