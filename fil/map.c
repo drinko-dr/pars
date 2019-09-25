@@ -8,6 +8,7 @@ int 		**map_create(int size)
 	int		**map;
 	int		i;
 
+	i = 0;
 	if (!(map = ((int **)malloc(sizeof(int *) * size))))
 		return (NULL);
 	while (i < size)

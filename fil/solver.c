@@ -11,6 +11,8 @@ int 	solver(int **map, t_shape *tet, int size)
 
 	row = 0;
 	col = 0;
+	if (tet->coord[7] == ((size * size) - 1) || tet->coord[6] == ((size * size) - 2))
+		return (0);
 	if (tet->next)
 	{
 		while (col < size) // заменить на start_row

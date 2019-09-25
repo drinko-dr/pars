@@ -31,18 +31,23 @@ int     main(int argc, char *argv[])
 	if (argc == 1)
 		return (0);
 	t_shape	*shape;
-	t_shape	*head;
+	t_shape	*head_shape;
 	shape = creat_new_list();
-	head = shape;
-	int size = parser(&argv[1], &shape);
+	head_shape = shape;
+	int size;
+	int count;
+	count = parser(&argv[1], &shape);
+	if (count == 0)
+		return (0);
 	int		**map;
 	//  = map_create(104);
 	map = map_fill_zero();
-
-
-	while (size < 20)
+	count *= 4;
+	size = ft_sqrt(count);
+	// size = 10;
+	while (size < 21)
 	{
-		if (solver(map, head, size))
+		if (solver(map, head_shape, size))
 			break ;
 		size++;
 	}

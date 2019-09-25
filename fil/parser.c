@@ -94,7 +94,7 @@ int		parser(char **file, t_shape **shape)
 		{
 			printf("error");
 			del_list(shape);
-			break ;
+			return (0) ;
 		}
 		count++;
 	}

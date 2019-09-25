@@ -37,6 +37,7 @@ int 					**map_create(int size);
 int						**map_fill_zero(void);
 void 					map_change_to_letter(int **map, int size);
 int 					solver(int **map, t_shape *tet, int size);
+int						ft_sqrt(int num);
 
 
 
