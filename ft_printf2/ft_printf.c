@@ -28,12 +28,6 @@ char *digit(char *str, va_list ap)
 	ft_putnbr(x);
 	return (str + 2);
 }
-//выводит знак %
-char *persent(char *str, va_list ap)
-{
-	write(1, "%%", 1);
-	return (str + 2);
-}
 //лень на разных компах подключать библиотеки поэтому
 //вставлю тут функции (не забыть бы убрать)
 int ft_strncmp(char *str1, char *str2, int n)
@@ -100,31 +94,58 @@ void width(char **str, t_flag **flag, va_list *ap)
 	else
 		(*flag)->width = get_digit(str);
 }
+
+int ft_strlen(char *str)
+{
+	int count = 0;
+	while (str[count])
+		count++;
+	return (count);
+}
+
+int flag_s(va_list *ap, t_flag **flag)
+{
+	char *str = va_arg(*ap, char*);
+	int count = ft_strlen(str);
+	if ((*flag)->point != 0)
+	{
+		(*flag)->point - count > 0 ? 0 : (count = (*flag)->point);
+	}
+	if ((*flag)->width != 0)
+	{
+		int x = (*flag)->width - count;
+		while (x-- > 0)
+			write(1, &(*flag)->kind_width, 1);
+	}
+	write(1, str, count);
+	return (1);
+}
+
 //вывод флага d
 /* для остальных флагов нужны почти теже действия
 * меняется только тип данных для счетчика и выводимого значения
 * хотелось бы передовать адрес функции в функцию в зависимости от
 * флагов, если это имеет смысл
 */
-int flag_d(va_list *ap, t_flag *flag)
+int flag_d(va_list *ap, t_flag **flag)
 {
-	if (flag->flag[0] == 'd')
+	if ((*flag)->flag[0] == 'd')
 	{
 		int num = va_arg(*ap, int);
 		int count = num_count(num);
-		if (flag->point != 0)
+		if ((*flag)->point != 0)
 		{
-			flag->kind_width = ' ';
-			flag->point - count > 0 ? flag->width -= (flag->point - count) : 0;
-			flag->point = flag->point - count;
+			(*flag)->kind_width = ' ';
+			(*flag)->point - count > 0 ? (*flag)->width -= ((*flag)->point - count) : 0;
+			(*flag)->point = (*flag)->point - count;
 		}
-		if (flag->width != 0)
+		if ((*flag)->width != 0)
 		{
-			int x = flag->width - count;
+			int x = (*flag)->width - count;
 			while (x-- > 0)
-				write(1, &flag->kind_width, 1);
+				write(1, &(*flag)->kind_width, 1);
 		}
-		while (flag->point-- > 0)
+		while ((*flag)->point-- > 0)
 			write (1, "0", 1);
 		ft_putnbr(num);
 		return (1);
@@ -171,7 +192,7 @@ int check_flag(char *str)
 	|| !ft_strncmp(str, "lx", 1) || !ft_strncmp(str, "lX", 1))
 		return (2);
 	if (*str == 'd' || *str == 'i' || *str == 'o' || *str == 'u'
-	|| *str == 'x' || *str == 'X')
+	|| *str == 'x' || *str == 'X' || *str == '%' || *str == 's')
 		return (1);
 	return (0);
 }
@@ -218,9 +239,29 @@ t_flag *get_flag(char **str, t_flag **flag, va_list *ap)
 			(*flag)->flag[i++] = (*(*str++));
 	return (head);
 }
+
+int diouxX_flag(va_list *ap, t_flag **flag)
+{
+	if ((*flag)->flag[0] == 'd')
+		flag_d(ap, flag);
+}
+
+
+
+int easy_flag(va_list *ap, t_flag **flag)
+{
+	if ((*flag)->flag[0] == '%')
+		write(1, "%%", 1);
+	else if ((*flag)->flag[0] == 's')
+		flag_s(ap, flag);
+	else
+		return (0);
+	return (1);
+}
+
 //пока не решил как будет называться
 //вывод след строки и флага будет идти через цикл скорее всего
-void parser(char *str, va_list *ap, t_flag **flag)
+int parser(char *str, va_list *ap, t_flag **flag)
 {
 	char *start;
 
@@ -229,7 +270,10 @@ void parser(char *str, va_list *ap, t_flag **flag)
 	str++;
 	*flag = get_flag(&str, flag, ap);
 	print_str(start);
-	flag_d(ap, *flag);
+	if (easy_flag(ap, flag))
+		return (1);
+	else if (diouxX_flag(ap, flag))
+		return (1);
 }
 //тупо набор функций
 void ft_printf(char *format, ...)
@@ -248,8 +292,8 @@ int main ()
 	int x = 42;
 	// ft_printf("some text for test %d one more text befor next %%", x);
 	// ft_printf("%10d", 54);
-	printf("some text %100.50%\n",425091);
-	ft_printf("some text %100.50d",425091);
+	printf("some text %2.5s\n", "hehehe");
+	ft_printf("some text %2.5s", "hehehe");
 	// ft_printf("some text %*d", 20, 42);
 
 	// printf("\n", 6, 6, 6, 6);
