@@ -25,4 +25,3 @@ typedef struct		 s_flag
 }					t_flag;
 
 # endif
-

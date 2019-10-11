@@ -5,8 +5,7 @@
 #include "ft_printf.h"
 #include <unistd.h>
 
-void ft_putnbr(int num);
-
+//выводит число
 void ft_putnbr(int num)
 {
 	if (num / 10 > 0)
@@ -15,27 +14,28 @@ void ft_putnbr(int num)
 	num += '0';
 	write(1, &num, 1);
 }
-
+//выводит строку до знака %
 char *print_str(char *str)
 {
 	while (*str && *str != '%')
 		write(1, str++, 1);
 	return (str);
 }
-
+// хз зачем
 char *digit(char *str, va_list ap)
 {
 	int x = va_arg(ap, int);
 	ft_putnbr(x);
 	return (str + 2);
 }
-
+//выводит знак %
 char *persent(char *str, va_list ap)
 {
 	write(1, "%%", 1);
 	return (str + 2);
 }
-
+//лень на разных компах подключать библиотеки поэтому
+//вставлю тут функции (не забыть бы убрать)
 int ft_strncmp(char *str1, char *str2, int n)
 {
 	while (*str1 ==*str2 && n-- > 0)
@@ -45,7 +45,7 @@ int ft_strncmp(char *str1, char *str2, int n)
 	}
 	return (*str1 - *str2);
 }
-
+// счетчик цифр в int
 int num_count(int num)
 {
 	int count = 0;
@@ -56,11 +56,36 @@ int num_count(int num)
 	}
 	return (count);
 }
-
-void width(char **str, t_flag **flag, va_list ap)
+//мини atoi
+int get_digit(char **str)
 {
 	int num = 0;
-	int point = 0;
+	while (**str >= '0' && **str <= '9')
+		num = num * 10 + (*(*str)++ - '0');
+	return (num);
+}
+/*сохранение флага точности, если число не float или double
+*то к выводимому числу добавляются 0 с переди
+*учитывая флаг ширины
+*
+*/
+void point(char **str, t_flag **flag, va_list *ap)
+{
+	int num = 0;
+	if (**str == '.')
+		(*str)++;
+	if (**str == '*')
+	{
+		(*flag)->point = va_arg(*ap, int);
+		(*str)++;
+	}
+	else
+		(*flag)->point = get_digit(str);
+}
+// сохранение флага ширины и определение чем заполнять ширину 0 или space
+void width(char **str, t_flag **flag, va_list *ap)
+{
+	int num = 0;
 	if (**str == '0' && *(*str - 1) == '%')
 	{
 		while (**str == '0')
@@ -69,31 +94,40 @@ void width(char **str, t_flag **flag, va_list ap)
 	}
 	if (**str == '*')
 	{
-		(*flag)->width = va_arg(ap, int);
+		(*flag)->width = va_arg(*ap, int);
 		(*str)++;
 	}
 	else
-	{
-		while (**str >= '0' && **str <= '9')
-			num = num * 10 + ((*(*str)++) - '0');
-		(*flag)->width = num;
-	}
-	if (**str == '.')
-		width((&*str + 1), flag, ap);
+		(*flag)->width = get_digit(str);
 }
-
-void parser(va_list ap, t_flag *flag)
+//вывод флага d
+/* для остальных флагов нужны почти теже действия
+* меняется только тип данных для счетчика и выводимого значения
+* хотелось бы передовать адрес функции в функцию в зависимости от
+* флагов, если это имеет смысл
+*/
+int flag_d(va_list *ap, t_flag *flag)
 {
 	if (flag->flag[0] == 'd')
 	{
-		int num = va_arg(ap, int);
+		int num = va_arg(*ap, int);
+		int count = num_count(num);
+		if (flag->point != 0)
+		{
+			flag->kind_width = ' ';
+			flag->point - count > 0 ? flag->width -= (flag->point - count) : 0;
+			flag->point = flag->point - count;
+		}
 		if (flag->width != 0)
 		{
-			int x = flag->width - num_count(num);
+			int x = flag->width - count;
 			while (x-- > 0)
 				write(1, &flag->kind_width, 1);
 		}
+		while (flag->point-- > 0)
+			write (1, "0", 1);
 		ft_putnbr(num);
+		return (1);
 	}
 	// if (!ft_strncmp(str, "%%", 1))
 		// str = persent(str, ap);
@@ -103,8 +137,9 @@ void parser(va_list ap, t_flag *flag)
 	// if (*str != '\0')
 	// 	parser(str, ap);
 	// return (1);
+	return (0);
 }
-
+//еще одна
 char *ft_strchr(char *str, char c)
 {
 	char *temp;
@@ -117,7 +152,7 @@ char *ft_strchr(char *str, char c)
 	}
 	return (str);
 }
-
+//проверка на валидный флаг, возвращает 0 если такого флага нет
 int check_flag(char *str)
 {
 	//   d, i           o, u, x, X
@@ -140,7 +175,8 @@ int check_flag(char *str)
 		return (1);
 	return (0);
 }
-
+// возможно мне не нужен односвязный список, достаточно каждый раз обнулять одну структуру
+//
 t_flag *create_new_flag(void)
 {
 	t_flag *node;
@@ -151,8 +187,12 @@ t_flag *create_new_flag(void)
 	node->next = NULL;
 	return (node);
 }
-
-t_flag *get_flag(char **str, t_flag **flag, va_list ap)
+//ищет ширину, точность, и валидный флаг
+/*если будет медленно работать с большими числами
+* стоит сначало как то обработать валидный флаг, а потом уже
+* искать ширину и точность
+*/
+t_flag *get_flag(char **str, t_flag **flag, va_list *ap)
 {
 	t_flag *head;
 	int	i;
@@ -171,17 +211,16 @@ t_flag *get_flag(char **str, t_flag **flag, va_list ap)
 		*flag = (*flag)->next;
 	}
 	width(str, flag, ap);
+	point(str, flag, ap);
 	//   d, i           o, u, x, X
 	if ((n = check_flag(*str)))
-	{
 		while (n-- > 0)
 			(*flag)->flag[i++] = (*(*str++));
-		(*flag)->flag[i] = '\0';
-	}
 	return (head);
 }
-
-void parser2(char *str, va_list ap, t_flag **flag)
+//пока не решил как будет называться
+//вывод след строки и флага будет идти через цикл скорее всего
+void parser(char *str, va_list *ap, t_flag **flag)
 {
 	char *start;
 
@@ -190,14 +229,15 @@ void parser2(char *str, va_list ap, t_flag **flag)
 	str++;
 	*flag = get_flag(&str, flag, ap);
 	print_str(start);
-	parser(ap, *flag);
+	flag_d(ap, *flag);
 }
+//тупо набор функций
 void ft_printf(char *format, ...)
 {
 	va_list ap;
 	t_flag *flag = NULL;
 	va_start(ap, format);
-	parser2(format, ap, &flag);
+	parser(format, &ap, &flag);
 	// parser(format, ap);
 	va_end(ap);
 
@@ -208,8 +248,10 @@ int main ()
 	int x = 42;
 	// ft_printf("some text for test %d one more text befor next %%", x);
 	// ft_printf("%10d", 54);
-	ft_printf("some text %0*d", 2 ,542222);
-	printf("some text %0*d", 2 ,54222);
+	printf("some text %100.50%\n",425091);
+	ft_printf("some text %100.50d",425091);
+	// ft_printf("some text %*d", 20, 42);
+
 	// printf("\n", 6, 6, 6, 6);
 	return (0);
 }
