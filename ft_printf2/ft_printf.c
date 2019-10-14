@@ -6,12 +6,22 @@
 #include <unistd.h>
 
 //выводит число
-void ft_putnbr(int num)
+void ft_putnbr(int num, char plus)
 {
+	if (num < 0)
+	{
+		write(1, "-", 1);
+		num *= -1;
+	}
+	else if (plus == '+')
+		write(1, "+", 1);
+	else if (plus == ' ')
+		write(1, " ", 1);
 	if (num / 10 > 0)
-		ft_putnbr(num /10);
+		ft_putnbr(num /10, '\0');
 	num %= 10;
 	num += '0';
+
 	write(1, &num, 1);
 }
 //выводит строку до знака %
@@ -25,7 +35,7 @@ char *print_str(char *str)
 char *digit(char *str, va_list ap)
 {
 	int x = va_arg(ap, int);
-	ft_putnbr(x);
+	// ft_putnbr(x);
 	return (str + 2);
 }
 //лень на разных компах подключать библиотеки поэтому
@@ -66,6 +76,19 @@ int get_digit(char **str)
 void point(char **str, t_flag **flag, va_list *ap)
 {
 	int num = 0;
+	if (**str == ' ')
+	{
+		(*flag)->plus = ' ';
+		while (**str == ' ')
+			(*str)++;
+	}
+	if (**str == '+')
+	{
+		(*flag)->plus = '+';
+		(*str)++;
+	}
+	while (**str == ' ')
+			(*str)++;
 	if (**str == '.')
 		(*str)++;
 	if (**str == '*')
@@ -85,6 +108,11 @@ void width(char **str, t_flag **flag, va_list *ap)
 		while (**str == '0')
 			(*str)++;
 		(*flag)->kind_width = '0';
+	}
+	if (**str == '-')
+	{
+		(*flag)->position = '-';
+		(*str)++;
 	}
 	if (**str == '*')
 	{
@@ -111,13 +139,19 @@ int flag_s(va_list *ap, t_flag **flag)
 	{
 		(*flag)->point - count > 0 ? 0 : (count = (*flag)->point);
 	}
-	if ((*flag)->width != 0)
+	int x = (*flag)->width - count;
+	if ((*flag)->position == '-')
 	{
-		int x = (*flag)->width - count;
+		write(1, str, count);
+		while (x-- > 0)
+			write(1, " ", 1);
+	}
+	else
+	{
 		while (x-- > 0)
 			write(1, &(*flag)->kind_width, 1);
+		write(1, str, count);
 	}
-	write(1, str, count);
 	return (1);
 }
 
@@ -129,36 +163,32 @@ int flag_s(va_list *ap, t_flag **flag)
 */
 int flag_d(va_list *ap, t_flag **flag)
 {
-	if ((*flag)->flag[0] == 'd')
+	int num = va_arg(*ap, int);
+	int count = num_count(num);
+	if ((*flag)->point != 0 || (*flag)->position != '\0')
 	{
-		int num = va_arg(*ap, int);
-		int count = num_count(num);
-		if ((*flag)->point != 0)
-		{
-			(*flag)->kind_width = ' ';
-			(*flag)->point - count > 0 ? (*flag)->width -= ((*flag)->point - count) : 0;
-			(*flag)->point = (*flag)->point - count;
-		}
-		if ((*flag)->width != 0)
-		{
-			int x = (*flag)->width - count;
-			while (x-- > 0)
-				write(1, &(*flag)->kind_width, 1);
-		}
+		(*flag)->kind_width = ' ';
+		(*flag)->point - count > 0 ? (*flag)->width -= ((*flag)->point - count) : 0;
+		(*flag)->point = (*flag)->point - count;
+	}
+	int x = (*flag)->width - count;
+	if (((*flag)->position != '\0'))
+	{
 		while ((*flag)->point-- > 0)
 			write (1, "0", 1);
-		ft_putnbr(num);
-		return (1);
+		ft_putnbr(num, (*flag)->plus);
+		while (x-- > 0)
+			write(1, &(*flag)->kind_width, 1);
 	}
-	// if (!ft_strncmp(str, "%%", 1))
-		// str = persent(str, ap);
-	// if (*str == '%' && *(str + 1) >= '0')
-		// width(str + 1, ap);
-	// if (flag->flag == 'i')
-	// if (*str != '\0')
-	// 	parser(str, ap);
-	// return (1);
-	return (0);
+	else
+	{
+		while (x-- > 0)
+			write(1, &(*flag)->kind_width, 1);
+		while ((*flag)->point-- > 0)
+			write (1, "0", 1);
+		ft_putnbr(num, (*flag)->plus);
+	}
+	return (1);
 }
 //еще одна
 char *ft_strchr(char *str, char c)
@@ -206,6 +236,8 @@ t_flag *create_new_flag(void)
 	node->point = 0;
 	node->width = 0;
 	node->next = NULL;
+	node->position = '\0';
+	node->plus = '\0';
 	return (node);
 }
 //ищет ширину, точность, и валидный флаг
@@ -292,8 +324,9 @@ int main ()
 	int x = 42;
 	// ft_printf("some text for test %d one more text befor next %%", x);
 	// ft_printf("%10d", 54);
-	printf("some text %2.5s\n", "hehehe");
-	ft_printf("some text %2.5s", "hehehe");
+	printf("some text%s", "one");
+	ft_printf("some text%+0s", "one");
+	// ft_printf("some text %0-010.1s", "one");
 	// ft_printf("some text %*d", 20, 42);
 
 	// printf("\n", 6, 6, 6, 6);

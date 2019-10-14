@@ -21,6 +21,8 @@ typedef struct		 s_flag
 	int				width;
 	int				point;
 	char 			kind_width;
+	char			position;
+	char			plus;
 	struct s_flag	*next;
 }					t_flag;
 
