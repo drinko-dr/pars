@@ -3,25 +3,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ft_printf.h"
-#include <unistd.h>
+#include <io.h>
+#include <stdint.h>
+
+void print_point(t_flag *flag)
+{
+	while (flag->point-- > 0)
+			write (1, "0", 1);
+}
 
 //выводит число
-void ft_putnbr(int num, char plus)
+void ft_putnbr(intmax_t num, t_flag *flag)
 {
 	if (num < 0)
 	{
 		write(1, "-", 1);
 		num *= -1;
+		flag->plus = '\0';
 	}
-	else if (plus == '+')
+	else if (flag->plus == '+' && (flag->flag[0] != 'u'
+	&& flag->flag[1] != 'u' && flag->flag[2] != 'u'))
+	{
 		write(1, "+", 1);
-	else if (plus == ' ')
+		flag->plus = '\0';
+	}
+	else if (flag->plus == ' ')
 		write(1, " ", 1);
+	print_point(flag);
 	if (num / 10 > 0)
-		ft_putnbr(num /10, '\0');
+		ft_putnbr(num /10, flag);
 	num %= 10;
 	num += '0';
-
 	write(1, &num, 1);
 }
 //выводит строку до знака %
@@ -50,10 +62,10 @@ int ft_strncmp(char *str1, char *str2, int n)
 	return (*str1 - *str2);
 }
 // счетчик цифр в int
-int num_count(int num)
+int num_count(intmax_t num)
 {
 	int count = 0;
-	while (num > 0)
+	while (num != 0)
 	{
 		num /= 10;
 		count++;
@@ -82,11 +94,6 @@ void point(char **str, t_flag **flag, va_list *ap)
 		while (**str == ' ')
 			(*str)++;
 	}
-	if (**str == '+')
-	{
-		(*flag)->plus = '+';
-		(*str)++;
-	}
 	while (**str == ' ')
 			(*str)++;
 	if (**str == '.')
@@ -103,6 +110,11 @@ void point(char **str, t_flag **flag, va_list *ap)
 void width(char **str, t_flag **flag, va_list *ap)
 {
 	int num = 0;
+	if (**str == '+')
+	{
+		(*flag)->plus = '+';
+		(*str)++;
+	}
 	if (**str == '0' && *(*str - 1) == '%')
 	{
 		while (**str == '0')
@@ -161,9 +173,11 @@ int flag_s(va_list *ap, t_flag **flag)
 * хотелось бы передовать адрес функции в функцию в зависимости от
 * флагов, если это имеет смысл
 */
-int flag_d(va_list *ap, t_flag **flag)
+// int flag_d(va_list *ap, t_flag **flag)
+
+int flag_d(intmax_t num, t_flag **flag)
 {
-	int num = va_arg(*ap, int);
+	// int num = va_arg(*ap, int);
 	int count = num_count(num);
 	if ((*flag)->point != 0 || (*flag)->position != '\0')
 	{
@@ -171,12 +185,12 @@ int flag_d(va_list *ap, t_flag **flag)
 		(*flag)->point - count > 0 ? (*flag)->width -= ((*flag)->point - count) : 0;
 		(*flag)->point = (*flag)->point - count;
 	}
+	if (num < 0)
+		(*flag)->width -= 1;
 	int x = (*flag)->width - count;
 	if (((*flag)->position != '\0'))
 	{
-		while ((*flag)->point-- > 0)
-			write (1, "0", 1);
-		ft_putnbr(num, (*flag)->plus);
+		ft_putnbr(num, *flag);
 		while (x-- > 0)
 			write(1, &(*flag)->kind_width, 1);
 	}
@@ -184,9 +198,7 @@ int flag_d(va_list *ap, t_flag **flag)
 	{
 		while (x-- > 0)
 			write(1, &(*flag)->kind_width, 1);
-		while ((*flag)->point-- > 0)
-			write (1, "0", 1);
-		ft_putnbr(num, (*flag)->plus);
+		ft_putnbr(num, *flag);
 	}
 	return (1);
 }
@@ -228,57 +240,67 @@ int check_flag(char *str)
 }
 // возможно мне не нужен односвязный список, достаточно каждый раз обнулять одну структуру
 //
-t_flag *create_new_flag(void)
+void list_start(t_flag **node)
 {
-	t_flag *node;
-	node = (t_flag *)malloc(sizeof(t_flag));
-	node->kind_width = ' ';
-	node->point = 0;
-	node->width = 0;
-	node->next = NULL;
-	node->position = '\0';
-	node->plus = '\0';
-	return (node);
+	(*node)->flag[0] = '\0';
+	(*node)->flag[1] = '\0';
+	(*node)->flag[2] = '\0';
+	(*node)->kind_width = ' ';
+	(*node)->point = 0;
+	(*node)->width = 0;
+	(*node)->next = NULL;
+	(*node)->position = '\0';
+	(*node)->plus = '\0';
+	// (*node)->argc = (char *)malloc(sizeof(char) * (num_count));
 }
 //ищет ширину, точность, и валидный флаг
 /*если будет медленно работать с большими числами
 * стоит сначало как то обработать валидный флаг, а потом уже
 * искать ширину и точность
 */
-t_flag *get_flag(char **str, t_flag **flag, va_list *ap)
+void *get_flag(char **str, t_flag **flag, va_list *ap)
 {
-	t_flag *head;
 	int	i;
 	int n;
 
 	i = 0;
 	n = 0;
-	if (!(*flag))
-	{
-		*flag = create_new_flag();
-		head = *flag;
-	}
-	else
-	{
-		(*flag)->next = create_new_flag();
-		*flag = (*flag)->next;
-	}
+	list_start(flag);
 	width(str, flag, ap);
 	point(str, flag, ap);
 	//   d, i           o, u, x, X
 	if ((n = check_flag(*str)))
 		while (n-- > 0)
-			(*flag)->flag[i++] = (*(*str++));
-	return (head);
+			(*flag)->flag[i++] = (*((*str)++));
 }
 
 int diouxX_flag(va_list *ap, t_flag **flag)
 {
-	if ((*flag)->flag[0] == 'd')
-		flag_d(ap, flag);
+	if ((*flag)->flag[0] == 'd' || (*flag)->flag[0] == 'i')
+		flag_d((int)va_arg(*ap, int), flag);
+	else if ((*flag)->flag[0] == 'u')
+		flag_d((unsigned int)va_arg(*ap, unsigned int), flag);
+	else if ((*flag)->flag[0] == 'o')
+		flag_d((int)va_arg(*ap, int), flag);
+	else if ((*flag)->flag[0] == 'x' || (*flag)->flag[0] == 'X')
+		flag_d((int)va_arg(*ap, int), flag);
+	else if (!ft_strncmp((*flag)->flag, "lo", 1))
+		flag_d((long int)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "llo", 2))
+		flag_d((long long int)va_arg(*ap, long long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "lx", 1) || !ft_strncmp((*flag)->flag, "lX", 1))
+		flag_d((long)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "llx", 2) || !ft_strncmp((*flag)->flag, "llX", 2))
+		flag_d((long)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "ld", 1) || !ft_strncmp((*flag)->flag, "li", 1))
+		flag_d((long)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "lu", 1))
+		flag_d((unsigned long int)va_arg(*ap, unsigned long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "llu", 2))
+		flag_d((unsigned long long int)va_arg(*ap, unsigned long long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "lld", 2) || !ft_strncmp((*flag)->flag, "lli", 2))
+		flag_d((long long)va_arg(*ap, long long int), flag);
 }
-
-
 
 int easy_flag(va_list *ap, t_flag **flag)
 {
@@ -297,26 +319,33 @@ int parser(char *str, va_list *ap, t_flag **flag)
 {
 	char *start;
 
+	while (*str != '\0')
+	{
 	start = str;
 	str = ft_strchr(str, '%');
 	str++;
-	*flag = get_flag(&str, flag, ap);
+	get_flag(&str, flag, ap);
 	print_str(start);
 	if (easy_flag(ap, flag))
-		return (1);
+		continue;
+		// return (1);
 	else if (diouxX_flag(ap, flag))
-		return (1);
+		continue;
+		// return (1);
+	str++;
+	}
+	return (0);
 }
 //тупо набор функций
 void ft_printf(char *format, ...)
 {
 	va_list ap;
 	t_flag *flag = NULL;
+	flag = (t_flag *)malloc(sizeof(t_flag));
 	va_start(ap, format);
 	parser(format, &ap, &flag);
 	// parser(format, ap);
 	va_end(ap);
-
 }
 
 int main ()
@@ -324,8 +353,8 @@ int main ()
 	int x = 42;
 	// ft_printf("some text for test %d one more text befor next %%", x);
 	// ft_printf("%10d", 54);
-	printf("some text%s", "one");
-	ft_printf("some text%+0s", "one");
+	printf("%%lld = %+.14llu\n", 235);
+	ft_printf("%%lld = %+.14llu", 235);
 	// ft_printf("some text %0-010.1s", "one");
 	// ft_printf("some text %*d", 20, 42);
 

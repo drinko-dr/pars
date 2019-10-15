@@ -17,13 +17,14 @@
 
 typedef struct		 s_flag
 {
-	char			flag[10];
+	char			flag[3];
 	int				width;
 	int				point;
 	char 			kind_width;
 	char			position;
 	char			plus;
 	struct s_flag	*next;
+	char			*argc;
 }					t_flag;
 
 # endif
