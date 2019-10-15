@@ -274,13 +274,25 @@ void *get_flag(char **str, t_flag **flag, va_list *ap)
 			(*flag)->flag[i++] = (*((*str)++));
 }
 
-int diouxX_flag(va_list *ap, t_flag **flag)
+int diu_flags(va_list *ap, t_flag **flag)
 {
 	if ((*flag)->flag[0] == 'd' || (*flag)->flag[0] == 'i')
 		flag_d((int)va_arg(*ap, int), flag);
 	else if ((*flag)->flag[0] == 'u')
 		flag_d((unsigned int)va_arg(*ap, unsigned int), flag);
-	else if ((*flag)->flag[0] == 'o')
+	else if (!ft_strncmp((*flag)->flag, "ld", 1) || !ft_strncmp((*flag)->flag, "li", 1))
+		flag_d((long)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "lu", 1))
+		flag_d((unsigned long int)va_arg(*ap, unsigned long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "llu", 2))
+		flag_d((unsigned long long int)va_arg(*ap, unsigned long long int), flag);
+	else if (!ft_strncmp((*flag)->flag, "lld", 2) || !ft_strncmp((*flag)->flag, "lli", 2))
+		flag_d((long long)va_arg(*ap, long long int), flag);
+}
+
+int oxX_flags(va_list *ap, t_flag **flag)
+{
+	if ((*flag)->flag[0] == 'o')
 		flag_d((int)va_arg(*ap, int), flag);
 	else if ((*flag)->flag[0] == 'x' || (*flag)->flag[0] == 'X')
 		flag_d((int)va_arg(*ap, int), flag);
@@ -292,14 +304,6 @@ int diouxX_flag(va_list *ap, t_flag **flag)
 		flag_d((long)va_arg(*ap, long int), flag);
 	else if (!ft_strncmp((*flag)->flag, "llx", 2) || !ft_strncmp((*flag)->flag, "llX", 2))
 		flag_d((long)va_arg(*ap, long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "ld", 1) || !ft_strncmp((*flag)->flag, "li", 1))
-		flag_d((long)va_arg(*ap, long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "lu", 1))
-		flag_d((unsigned long int)va_arg(*ap, unsigned long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "llu", 2))
-		flag_d((unsigned long long int)va_arg(*ap, unsigned long long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "lld", 2) || !ft_strncmp((*flag)->flag, "lli", 2))
-		flag_d((long long)va_arg(*ap, long long int), flag);
 }
 
 int easy_flag(va_list *ap, t_flag **flag)
@@ -329,7 +333,9 @@ int parser(char *str, va_list *ap, t_flag **flag)
 	if (easy_flag(ap, flag))
 		continue;
 		// return (1);
-	else if (diouxX_flag(ap, flag))
+	else if (diu_flags(ap, flag))
+		continue;
+	else if (oxX_flags(ap, flag))
 		continue;
 		// return (1);
 	str++;
