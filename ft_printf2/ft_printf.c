@@ -37,11 +37,12 @@ void ft_putnbr(intmax_t num, t_flag *flag)
 	write(1, &num, 1);
 }
 //выводит строку до знака %
-char *print_str(char *str)
+int print_str(char *str)
 {
-	while (*str && *str != '%')
-		write(1, str++, 1);
-	return (str);
+	int len = 0;
+	while (str[len] && str[len] != '%')
+		write(1, &str[len++], 1);
+	return (len);
 }
 // хз зачем
 char *digit(char *str, va_list ap)
@@ -175,6 +176,17 @@ int flag_s(va_list *ap, t_flag **flag)
 */
 // int flag_d(va_list *ap, t_flag **flag)
 
+int len_digit(t_flag *flag, int count)
+{
+	int len = 0;
+	if (flag->width > 0)
+		len += flag->width;
+	if (flag->point)
+		len += flag->point;
+	len += count;
+	return (len);
+}
+
 int flag_d(intmax_t num, t_flag **flag)
 {
 	// int num = va_arg(*ap, int);
@@ -200,7 +212,7 @@ int flag_d(intmax_t num, t_flag **flag)
 			write(1, &(*flag)->kind_width, 1);
 		ft_putnbr(num, *flag);
 	}
-	return (1);
+	return (len_digit(*flag, count));
 }
 //еще одна
 char *ft_strchr(char *str, char c)
@@ -216,28 +228,28 @@ char *ft_strchr(char *str, char c)
 	return (str);
 }
 //проверка на валидный флаг, возвращает 0 если такого флага нет
-int check_flag(char *str)
-{
-	//   d, i           o, u, x, X
-	if (!ft_strncmp(str, "hhd", 2) || !ft_strncmp(str, "hhi", 2)
-	|| !ft_strncmp(str, "hho", 2) || !ft_strncmp(str, "hhu", 2)
-	|| !ft_strncmp(str, "hhx", 2) || !ft_strncmp(str, "hhX", 2)
-	|| !ft_strncmp(str, "lld", 2) || !ft_strncmp(str, "lli", 2)
-	|| !ft_strncmp(str, "llo", 2) || !ft_strncmp(str, "llu", 2)
-	|| !ft_strncmp(str, "llx", 2) || !ft_strncmp(str, "llX", 2))
-		return (3);
-	if (!ft_strncmp(str, "hd", 1) || !ft_strncmp(str, "hi", 1)
-	|| !ft_strncmp(str, "ho", 1) || !ft_strncmp(str, "hu", 1)
-	|| !ft_strncmp(str, "hx", 1) || !ft_strncmp(str, "hX", 1)
-	|| !ft_strncmp(str, "ld", 1) || !ft_strncmp(str, "li", 1)
-	|| !ft_strncmp(str, "lo", 1) || !ft_strncmp(str, "lu", 1)
-	|| !ft_strncmp(str, "lx", 1) || !ft_strncmp(str, "lX", 1))
-		return (2);
-	if (*str == 'd' || *str == 'i' || *str == 'o' || *str == 'u'
-	|| *str == 'x' || *str == 'X' || *str == '%' || *str == 's')
-		return (1);
-	return (0);
-}
+// int check_flag(char *str)
+// {
+// 	//   d, i           o, u, x, X
+// 	if (!ft_strncmp(str, "hhd", 2) || !ft_strncmp(str, "hhi", 2)
+// 	|| !ft_strncmp(str, "hho", 2) || !ft_strncmp(str, "hhu", 2)
+// 	|| !ft_strncmp(str, "hhx", 2) || !ft_strncmp(str, "hhX", 2)
+// 	|| !ft_strncmp(str, "lld", 2) || !ft_strncmp(str, "lli", 2)
+// 	|| !ft_strncmp(str, "llo", 2) || !ft_strncmp(str, "llu", 2)
+// 	|| !ft_strncmp(str, "llx", 2) || !ft_strncmp(str, "llX", 2))
+// 		return (3);
+// 	if (!ft_strncmp(str, "hd", 1) || !ft_strncmp(str, "hi", 1)
+// 	|| !ft_strncmp(str, "ho", 1) || !ft_strncmp(str, "hu", 1)
+// 	|| !ft_strncmp(str, "hx", 1) || !ft_strncmp(str, "hX", 1)
+// 	|| !ft_strncmp(str, "ld", 1) || !ft_strncmp(str, "li", 1)
+// 	|| !ft_strncmp(str, "lo", 1) || !ft_strncmp(str, "lu", 1)
+// 	|| !ft_strncmp(str, "lx", 1) || !ft_strncmp(str, "lX", 1))
+// 		return (2);
+// 	if (*str == 'd' || *str == 'i' || *str == 'o' || *str == 'u'
+// 	|| *str == 'x' || *str == 'X' || *str == '%' || *str == 's')
+// 		return (1);
+// 	return (0);
+// }
 // возможно мне не нужен односвязный список, достаточно каждый раз обнулять одну структуру
 //
 void list_start(t_flag **node)
@@ -269,52 +281,76 @@ void *get_flag(char **str, t_flag **flag, va_list *ap)
 	width(str, flag, ap);
 	point(str, flag, ap);
 	//   d, i           o, u, x, X
-	if ((n = check_flag(*str)))
-		while (n-- > 0)
+	// if ((n = check_flag(*str)))
+	// 	while (n-- > 0)
+	// 		(*flag)->flag[i++] = (*((*str)++));
+}
+
+void save_flag(t_flag **flag, char **str, int n)
+{
+	int i = 0;
+	while (n-- > 0)
 			(*flag)->flag[i++] = (*((*str)++));
 }
 
-int diu_flags(va_list *ap, t_flag **flag)
+int diu_flags(va_list *ap, t_flag **flag, char **str)
 {
-	if ((*flag)->flag[0] == 'd' || (*flag)->flag[0] == 'i')
-		flag_d((int)va_arg(*ap, int), flag);
-	else if ((*flag)->flag[0] == 'u')
-		flag_d((unsigned int)va_arg(*ap, unsigned int), flag);
-	else if (!ft_strncmp((*flag)->flag, "ld", 1) || !ft_strncmp((*flag)->flag, "li", 1))
-		flag_d((long)va_arg(*ap, long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "lu", 1))
-		flag_d((unsigned long int)va_arg(*ap, unsigned long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "llu", 2))
-		flag_d((unsigned long long int)va_arg(*ap, unsigned long long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "lld", 2) || !ft_strncmp((*flag)->flag, "lli", 2))
-		flag_d((long long)va_arg(*ap, long long int), flag);
+	int n = 0;
+	int pc = 0;
+	if (**str == 'd' || **str == 'i')
+		pc = flag_d((int)va_arg(*ap, int), flag);
+	else if (**str == 'u')
+		pc = flag_d((unsigned int)va_arg(*ap, unsigned int), flag);
+	else if (!ft_strncmp(*str, "ld", (n = 1)) || !ft_strncmp(*str, "li", (n = 1)))
+		pc = flag_d((long)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp(*str, "lu", (n = 1)))
+		pc = flag_d((unsigned long int)va_arg(*ap, unsigned long int), flag);
+	else if (!ft_strncmp(*str, "llu", (n = 2)))
+		pc = flag_d((unsigned long long int)va_arg(*ap, unsigned long long int), flag);
+	else if (!ft_strncmp(*str, "lld", (n = 2)) || !ft_strncmp(*str, "lli", (n = 2)))
+		pc = flag_d((long long)va_arg(*ap, long long int), flag);
+	else
+		return (0);
+	save_flag(flag, str, (n += 1));
+	return (pc);
 }
 
-int oxX_flags(va_list *ap, t_flag **flag)
+int oxX_flags(va_list *ap, t_flag **flag, char **str)
 {
-	if ((*flag)->flag[0] == 'o')
-		flag_d((int)va_arg(*ap, int), flag);
-	else if ((*flag)->flag[0] == 'x' || (*flag)->flag[0] == 'X')
-		flag_d((int)va_arg(*ap, int), flag);
-	else if (!ft_strncmp((*flag)->flag, "lo", 1))
-		flag_d((long int)va_arg(*ap, long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "llo", 2))
-		flag_d((long long int)va_arg(*ap, long long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "lx", 1) || !ft_strncmp((*flag)->flag, "lX", 1))
-		flag_d((long)va_arg(*ap, long int), flag);
-	else if (!ft_strncmp((*flag)->flag, "llx", 2) || !ft_strncmp((*flag)->flag, "llX", 2))
-		flag_d((long)va_arg(*ap, long int), flag);
+	int n = 0;
+	int pc = 0;
+	if (**str == 'o')
+		pc = flag_d((int)va_arg(*ap, int), flag);
+	else if (**str == 'x' || **str == 'X')
+		pc = flag_d((int)va_arg(*ap, int), flag);
+	else if (!ft_strncmp(*str, "lo", (n = 1)))
+		pc = flag_d((long int)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp(*str, "llo", (n = 2)))
+		pc = flag_d((long long int)va_arg(*ap, long long int), flag);
+	else if (!ft_strncmp(*str, "lx", (n = 1)) || !ft_strncmp(*str, "lX", (n = 1)))
+		pc = flag_d((long)va_arg(*ap, long int), flag);
+	else if (!ft_strncmp(*str, "llx", (n = 2)) || !ft_strncmp(*str, "llX", (n = 2)))
+		pc = flag_d((long)va_arg(*ap, long int), flag);
+	else
+		return (0);
+	save_flag(flag, str, (n += 1));
+	return (pc);
 }
 
-int easy_flag(va_list *ap, t_flag **flag)
+int easy_flag(va_list *ap, t_flag **flag, char **str)
 {
-	if ((*flag)->flag[0] == '%')
+	int len = 0;
+	if (*str[len] == '%')
+	{
 		write(1, "%%", 1);
+		len++;
+	}
 	else if ((*flag)->flag[0] == 's')
 		flag_s(ap, flag);
 	else
 		return (0);
-	return (1);
+	save_flag(flag, str, 1);
+	return (len);
 }
 
 //пока не решил как будет называться
@@ -322,45 +358,45 @@ int easy_flag(va_list *ap, t_flag **flag)
 int parser(char *str, va_list *ap, t_flag **flag)
 {
 	char *start;
-
+	int len = 0;
 	while (*str != '\0')
 	{
-	start = str;
-	str = ft_strchr(str, '%');
-	str++;
-	get_flag(&str, flag, ap);
-	print_str(start);
-	if (easy_flag(ap, flag))
-		continue;
-		// return (1);
-	else if (diu_flags(ap, flag))
-		continue;
-	else if (oxX_flags(ap, flag))
-		continue;
-		// return (1);
-	str++;
+		start = str;
+		int l = 0;
+		str = ft_strchr(str, '%');
+		str++;
+		get_flag(&str, flag, ap);
+		len += print_str(start);
+		if ((l = easy_flag(ap, flag, &str)))
+			len += l;
+		else if ((l = diu_flags(ap, flag, &str)))
+			len += l;
+		else if ((l = oxX_flags(ap, flag, &str)))
+			len += l;
 	}
-	return (0);
+	return (len);
 }
 //тупо набор функций
-void ft_printf(char *format, ...)
+int ft_printf(char *format, ...)
 {
+	int len = 0;
 	va_list ap;
 	t_flag *flag = NULL;
 	flag = (t_flag *)malloc(sizeof(t_flag));
 	va_start(ap, format);
-	parser(format, &ap, &flag);
-	// parser(format, ap);
+	len = parser(format, &ap, &flag);
 	va_end(ap);
+	return (len);
 }
 
 int main ()
 {
-	int x = 42;
 	// ft_printf("some text for test %d one more text befor next %%", x);
 	// ft_printf("%10d", 54);
-	printf("%%lld = %+.14llu\n", 235);
-	ft_printf("%%lld = %+.14llu", 235);
+	int y = printf("%5d %5% %5.6%\n", 5);
+	int x = ft_printf("%5d %5% %5.6%\n", 5);
+	printf("printf = %d\n", y);
+	ft_printf("ft_printf = %d", x);
 	// ft_printf("some text %0-010.1s", "one");
 	// ft_printf("some text %*d", 20, 42);
 
