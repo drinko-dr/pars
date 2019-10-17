@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ft_printf.h"
-#include <io.h>
+#include <unistd.h>
 #include <stdint.h>
+int len_digit(t_flag *flag, int count);
 
 void print_base(intmax_t num, int base)
 {
@@ -15,11 +16,11 @@ void print_base(intmax_t num, int base)
 	write (1, &num, 1);
 }
 
-void print_point(t_flag *flag)
-{
-	while (flag->point-- > 0)
-			write (1, "0", 1);
-}
+// void print_point(t_flag *flag)
+// {
+// 	while (flag->point-- > 0)
+// 			write (1, "0", 1);
+// }
 
 void ft_putnbr(intmax_t num, int base)
 {
@@ -46,7 +47,10 @@ void print_num(intmax_t num, t_flag *flag, void fun(intmax_t, int), int base)
 	else if (flag->plus == ' ')
 		write(1, " ", 1);
 	flag->plus = '\0';
-	print_point(flag);
+	// print_point(flag);
+	int x = flag->point;
+	while (x-- > 0)
+			write (1, "0", 1);
 	fun(num, base);
 	// if (num / 10 > 0)
 	// 	ft_putnbr(num /10, flag);
@@ -63,12 +67,12 @@ int print_str(char *str)
 	return (len);
 }
 // хз зачем
-char *digit(char *str, va_list ap)
-{
-	int x = va_arg(ap, int);
-	// ft_putnbr(x);
-	return (str + 2);
-}
+// char *digit(char *str, va_list ap)
+// {
+// 	int x = va_arg(ap, int);
+// 	// ft_putnbr(x);
+// 	return (str + 2);
+// }
 //лень на разных компах подключать библиотеки поэтому
 //вставлю тут функции (не забыть бы убрать)
 int ft_strncmp(char *str1, char *str2, int n)
@@ -106,7 +110,6 @@ int get_digit(char **str)
 */
 void point(char **str, t_flag **flag, va_list *ap)
 {
-	int num = 0;
 	if (**str == ' ')
 	{
 		(*flag)->plus = ' ';
@@ -171,15 +174,18 @@ int ft_strlen(char *str)
 	return (count);
 }
 
-int flag_s(va_list *ap, t_flag **flag)
+int flag_s(char *ap, t_flag **flag)
 {
-	char *str = va_arg(*ap, char*);
+	char *str;
+	str = ap;
+	// va_arg(*ap, char*);
 	int count = ft_strlen(str);
 	if ((*flag)->point != 0)
 	{
 		(*flag)->point - count > 0 ? 0 : (count = (*flag)->point);
 	}
-	int x = (*flag)->width - count;
+	(*flag)->width -= count;
+	int x = (*flag)->width;
 	if ((*flag)->position == '-')
 	{
 		write(1, str, count);
@@ -192,7 +198,7 @@ int flag_s(va_list *ap, t_flag **flag)
 			write(1, &(*flag)->kind_width, 1);
 		write(1, str, count);
 	}
-	return (1);
+	return (len_digit(*flag, count));
 }
 
 //вывод флага d
@@ -225,15 +231,16 @@ void print_position(intmax_t num, t_flag **flag, void fun(intmax_t, int), int ba
 			(*flag)->width = 0;
 		}
 	}
+	int x = (*flag)->width;
 	if (((*flag)->position != '\0'))
 	{
 		print_num(num, *flag, fun, base);
-		while ((*flag)->width-- > 0)
+		while (x-- > 0)
 			write(1, &(*flag)->kind_width, 1);
 	}
 	else
 	{
-		while ((*flag)->width-- > 0)
+		while (x-- > 0)
 			write(1, &(*flag)->kind_width, 1);
 		print_num(num, *flag, fun, base);
 	}
@@ -356,7 +363,7 @@ void list_start(t_flag **node)
 * стоит сначало как то обработать валидный флаг, а потом уже
 * искать ширину и точность
 */
-void *get_flag(char **str, t_flag **flag, va_list *ap)
+void get_flag(char **str, t_flag **flag, va_list *ap)
 {
 	int	i;
 	int n;
@@ -377,7 +384,7 @@ void *get_flag(char **str, t_flag **flag, va_list *ap)
 	// 		(*flag)->flag[i++] = (*((*str)++));
 }
 
-void save_flag(t_flag **flag, char **str, int n)
+void move_flag(t_flag **flag, char **str, int n)
 {
 	int i = 0;
 	while (n-- > 0)
@@ -402,7 +409,7 @@ int diu_flags(va_list *ap, t_flag **flag, char **str)
 		pc = flag_d((long long)va_arg(*ap, long long int), flag, &ft_putnbr, 10);
 	else
 		return (0);
-	save_flag(flag, str, (n += 1));
+	move_flag(flag, str, (n += 1));
 	return (pc);
 }
 
@@ -424,23 +431,46 @@ int oxX_flags(va_list *ap, t_flag **flag, char **str)
 		pc = flag_d((unsigned long)va_arg(*ap, long int), flag, &print_base, 16);
 	else
 		return (0);
-	save_flag(flag, str, (n += 1));
+	move_flag(flag, str, (n += 1));
 	return (pc);
 }
+
+// int hh_flags(va_list *ap, t_flag **flag, char **str)
+// {
+// 	int n = 0;
+// 	int pc = 0;
+// 	if (!ft_strncmp(*str, "ho", (n = 1)))
+// 		pc = flag_d((unsigned short)va_arg(*ap, unsigned short), flag, &print_base, 8);
+// 	else if (!ft_strncmp(*str, "hho", (n = 2)))
+// 		pc = flag_d((unsigned char)va_arg(*ap, unsigned char), flag, &print_base, 8);
+// 	else if (!ft_strncmp(*str, "hx", (n = 1)) || !ft_strncmp(*str, "hX", (n = 1)))
+// 		pc = flag_d((unsigned short)va_arg(*ap, unsigned short), flag, &print_base, 16);
+// 	else if (!ft_strncmp(*str, "hhx", (n = 2)) || !ft_strncmp(*str, "hhX", (n = 2)))
+// 		pc = flag_d((unsigned char)va_arg(*ap, unsigned char), flag, &print_base, 16);
+// 	else if (!ft_strncmp(*str, "hd", (n = 1)) || !ft_strncmp(*str, "hi", (n = 1)))
+// 		pc = flag_d((short)va_arg(*ap, short), flag, &ft_putnbr, 10);
+// 	else if (!ft_strncmp(*str, "hu", (n = 1)))
+// 		pc = flag_d((unsigned short)va_arg(*ap, unsigned short), flag, &ft_putnbr, 10);
+// 	else if (!ft_strncmp(*str, "hhu", (n = 2)))
+// 		pc = flag_d((unsigned char)va_arg(*ap, unsigned char), flag, &ft_putnbr, 10);
+// 	else if (!ft_strncmp(*str, "hhd", (n = 2)) || !ft_strncmp(*str, "hhi", (n = 2)))
+// 		pc = flag_d((signed char)va_arg(*ap, signed char), flag, &ft_putnbr, 10);
+// 	else
+// 		return (0);
+// 	move_flag(flag, str, (n += 1));
+// 	return (pc);
+// }
 
 int easy_flag(va_list *ap, t_flag **flag, char **str)
 {
 	int len = 0;
 	if (*str[len] == '%')
-	{
-		write(1, "%%", 1);
-		len++;
-	}
+		len += flag_s("%", flag);
 	else if (*str[len] == 's')
-		len += flag_s(ap, flag);
+		len += flag_s(va_arg(*ap, char*), flag);
 	else
 		return (0);
-	save_flag(flag, str, 1);
+	move_flag(flag, str, 1);
 	return (len);
 }
 
@@ -450,7 +480,7 @@ int parser(char *str, va_list *ap, t_flag **flag)
 {
 	char *start;
 	int len = 0;
-	while (*str != '\0')
+    	while (*str != '\0')
 	{
 		start = str;
 		int l = 0;
@@ -465,6 +495,8 @@ int parser(char *str, va_list *ap, t_flag **flag)
 			len += l;
 		else if ((l = oxX_flags(ap, flag, &str)))
 			len += l;
+		// else if ((l = hh_flags(ap, flag, &str)))
+		// 	len += l;
 	}
 	return (len);
 }
@@ -567,22 +599,35 @@ int main ()
 // 	printf("flag %%+5.10d = %+5.10dsome\n", -54);
 
 
-
-
-	printf("%#5o", 10);
-   	ft_printf("\n");
-  	ft_printf("%#5o\n", 10);
-	printf("%0#5o", 10);
-   	ft_printf("\n");
-  	ft_printf("%0#5o\n", 10);
-	printf("%#05o\n", 10);
-  	ft_printf("%#05o\n", 10);
-	printf("%0#05o\n", 10);
-  	ft_printf("%0#05o\n", 10);
-	// int y = printf("%5d %5% %5.6%\n", 5);
-	// int x = ft_printf("%5d %5% %5.6%\n", 5);
-	// printf("printf = %d\n", y);
-	// ft_printf("ft_printf = %d\n", x);
+// printf("%hhd\n", 42);
+// printf("%hd\n", 42);
+// printf("%hhi\n", 42);
+// printf("%hho\n", 42);
+// char c = 255;
+// ft_printf("%hhx\n", c);
+// printf("%hhx\n", c);
+	// printf("%5%\n");
+	// printf("%05.5%\n");
+	// printf("%.5%\n");
+	// printf("%05%\n");
+	// ft_printf("%5%\n");
+	// ft_printf("%05.5%\n");
+	// ft_printf("%.5%\n");
+	// ft_printf("%05%\n");
+	// printf("%#5o", 10);
+   	// ft_printf("\n");
+  	// ft_printf("%#5o\n", 10);
+	// printf("%0#5o", 10);
+   	// ft_printf("\n");
+  	// ft_printf("%0#5o\n", 10);
+	// printf("%#05o\n", 10);
+  	// ft_printf("%#05o\n", 10);
+	// printf("%0#05o\n", 10);
+  	// ft_printf("%0#05o\n", 10);
+	int y = printf("%#08x", 42);
+	int x = ft_printf("%#08x", 42);
+	printf("printf = %d\n", y);
+	ft_printf("ft_printf = %d\n", x);
 	// printf("%5%");
    	// printf("%x %X %#020x\n", 31, 31, 31);
   	// ft_printf("%s", "jk");
