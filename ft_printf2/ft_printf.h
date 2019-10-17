@@ -25,6 +25,7 @@ typedef struct		 s_flag
 	char			plus;
 	struct s_flag	*next;
 	char			*argc;
+	char			octothorp;
 }					t_flag;
 
 # endif
