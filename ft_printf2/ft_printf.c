@@ -14,7 +14,7 @@ void print_base(intmax_t num, int base, t_flag *flag)
 		print_base(num / base, base, flag);
 	if (flag->flag != NULL && (flag->flag[0] == 'X' || flag->flag[1] == 'X' || flag->flag[2] == 'X'))
 		c = 'A';
-	num %= base;
+	num =  num % base;
 	num += (num > 9 ? c - 10 : '0');
 	write (1, &num, 1);
 }
@@ -48,6 +48,8 @@ int print_num(intmax_t num, t_flag *flag, void fun(intmax_t, int, t_flag*), int 
 		write(1, "+", len += 1);
 	else if (flag->octothorp == '#' && base == 8)
 		write(1, "0", len += 1);
+	else if (flag->octothorp == '#' && flag->flag != NULL && (flag->flag[0] == 'X' || flag->flag[1] == 'X' || flag->flag[2] == 'X'))
+		write(1, "0X", len += 2);
 	else if (flag->octothorp == '#' && base == 16)
 		write(1, "0x", len += 2);
 	else if (flag->plus == ' ')
@@ -185,8 +187,12 @@ int flag_s(char *ap, t_flag **flag)
 {
 	char *str;
 	str = ap;
+	int count = 0;
 	// va_arg(*ap, char*);
-	int count = ft_strlen(str);
+	if (ap != NULL)
+		count = ft_strlen(str);
+	else
+		write(1, "(null)", 6);
 	if ((*flag)->point != 0)
 	{
 		(*flag)->point - count > 0 ? 0 : (count = (*flag)->point);
@@ -383,11 +389,13 @@ void get_flag(char **str, t_flag **flag, va_list *ap)
 	list_start(flag);
 	octothorp(str, flag);
 	width(str, flag, ap);
+	point(str, flag, ap);
 	if ((*flag)->octothorp != '#')
 		octothorp(str, flag);
 	if ((*flag)->width == 0)
 		width(str, flag, ap);
-	point(str, flag, ap);
+	if ((*flag)->point == 0)
+		point(str, flag, ap);
 	//   d, i           o, u, x, X
 	// if ((n = check_flag(*str)))
 	// 	while (n-- > 0)
@@ -429,17 +437,17 @@ int oxX_flags(va_list *ap, t_flag **flag, char **str)
 	int n = 0;
 	int pc = 0;
 	if (**str == 'o')
-		pc = flag_d((unsigned int)va_arg(*ap, int), flag, &print_base, 8);
-	else if (**str == 'x' || **str == (*((*flag)->flag = "X")))
-		pc = flag_d((unsigned int)va_arg(*ap, int), flag, &print_base, 16);
+		pc = flag_d((unsigned int)va_arg(*ap, unsigned int), flag, &print_base, 8);
+	else if (**str == (*((*flag)->flag = "x\0\0")) || **str == (*((*flag)->flag = "X\0\0")))
+		pc = flag_d((unsigned int)va_arg(*ap, unsigned int), flag, &print_base, 16);
 	else if (!ft_strncmp(*str, "lo", (n = 1)))
-		pc = flag_d((unsigned long int)va_arg(*ap, long int), flag, &print_base, 8);
+		pc = flag_d((unsigned long int)va_arg(*ap, unsigned long int), flag, &print_base, 8);
 	else if (!ft_strncmp(*str, "llo", (n = 2)))
-		pc = flag_d((unsigned long long int)va_arg(*ap, long long int), flag, &print_base, 8);
-	else if (!ft_strncmp(*str, "lx", (n = 1)) || !ft_strncmp(*str, ((*flag)->flag = "lX"), (n = 1)))
-		pc = flag_d((unsigned long)va_arg(*ap, long int), flag, &print_base, 16);
-	else if (!ft_strncmp(*str, "llx", (n = 2)) || !ft_strncmp(*str, ((*flag)->flag = "llX"), (n = 2)))
-		pc = flag_d((unsigned long)va_arg(*ap, long int), flag, &print_base, 16);
+		pc = flag_d((unsigned long long int)va_arg(*ap, unsigned long long int), flag, &print_base, 8);
+	else if (!ft_strncmp(*str, ((*flag)->flag = "lx\0"), (n = 1)) || !ft_strncmp(*str, ((*flag)->flag = "lX\0"), (n = 1)))
+		pc = flag_d((unsigned long)va_arg(*ap, unsigned long int), flag, &print_base, 16);
+	else if (!ft_strncmp(*str, ((*flag)->flag = "llx"), (n = 2)) || !ft_strncmp(*str, ((*flag)->flag = "llX"), (n = 2)))
+		pc = flag_d((unsigned long long)va_arg(*ap, unsigned long long int), flag, &print_base, 16);
 	else
 		return (0);
 	move_flag(flag, str, (n += 1));
@@ -506,8 +514,8 @@ int parser(char *str, va_list *ap, t_flag **flag)
 			len += l;
 		else if ((l = oxX_flags(ap, flag, &str)))
 			len += l;
-		// else if ((l = hh_flags(ap, flag, &str)))
-		// 	len += l;
+		else if ((l = hh_flags(ap, flag, &str)))
+			len += l;
 	}
 	return (len);
 }
@@ -584,7 +592,7 @@ ft_printf("\n");
 //   2. (    1) -->0<--
 ft_printf("\n");
 // # 0020 (int)
-  ft_printf("%x", 2); //error
+  ft_printf("%x", 2);
 //   1. (   -1) -->7<--
 //   2. (    1) -->0<--
 ft_printf("\n");
@@ -599,22 +607,23 @@ ft_printf("\n");
 //   2. (   10) -->2a        <--
 ft_printf("\n");
 // # 0023 (int)
-  ft_printf("%lx", 4294967296); //error
+  ft_printf("%llx", 4294967296);
+  printf("%llx", 4294967296);
 //   1. (    9) -->877777777<--
 //   2. (    9) -->100000000<--
 ft_printf("\n");
 // # 0024 (int)
-  ft_printf("%llX", 4294967296); //error
+  ft_printf("%llX", 4294967296);
 //   1. (    9) -->877777777<--
 //   2. (    9) -->100000000<--
 ft_printf("\n");
 // # 0025 (int)
-  ft_printf("%hx", 4294967296); //error
+  ft_printf("%hx", 4294967296);
 //   1. (    2) -->hx<--
 //   2. (    1) -->0<--
 ft_printf("\n");
 // # 0026 (int)
-  ft_printf("%hhX", 4294967296); //error
+  ft_printf("%hhX", 4294967296);
 //   1. (    3) -->hhX<--
 //   2. (    1) -->0<--
 ft_printf("\n");
@@ -624,7 +633,8 @@ ft_printf("\n");
 //   2. (   16) -->7fffffffffffffff<--
 ft_printf("\n");
 // # 0028 (int)
-  ft_printf("%llx", 9223372036854775808); //error
+  ft_printf("%llx", 9223372036854775808);
+  printf("%llx", 9223372036854775808);
 //   1. (   18) -->>FFFFFFFFFFFFFFF<--
 //   2. (   16) -->7fffffffffffffff<--
 ft_printf("\n");
@@ -659,12 +669,12 @@ ft_printf("\n");
 //   2. (    4) -->0x2a<--
 ft_printf("\n");
 // # 0035 (int)
-  ft_printf("%#llx", 9223372036854775807); //error
+  ft_printf("%#llx", 9223372036854775807);
 //   1. (   18) -->>FFFFFFFFFFFFFFF<--
 //   2. (   18) -->0x7fffffffffffffff<--
 ft_printf("\n");
 // # 0036 (int)
-  ft_printf("%#x", 0); //error
+  ft_printf("%#x", 0);
 //   1. (   -1) -->7<--
 //   2. (    1) -->0<--
 ft_printf("\n");
@@ -674,7 +684,7 @@ ft_printf("\n");
 //   2. (    4) -->0x2a<--
 ft_printf("\n");
 // # 0038 (int)
-  ft_printf("%#X", 42); //error
+  ft_printf("%#X", 42);
 //   1. (    1) -->9A<--
 //   2. (    4) -->0X2A<--
 ft_printf("\n");
@@ -695,6 +705,7 @@ ft_printf("\n");
 ft_printf("\n");
 // # 0042 (int)
   ft_printf("@moulitest: %#.x %#.0x", 0, 0); //error
+  printf("@moulitest: %#.x %#.0x", 0, 0);
 //   1. (   11) -->@moulitest: 7 7<--
 //   2. (   13) -->@moulitest:  <--
 ft_printf("\n");
@@ -829,7 +840,7 @@ ft_printf("\n");
 //   2. (   18) -->thisisamultistring<--
 ft_printf("\n");
 // # 0069 (NULL)
-//   ft_printf("@moulitest: %s", NULL); //error
+  ft_printf("@moulitest: %s", NULL);
 // includes/projects/ft_printf/ft_printf_main.sh: line 206: printf: @moulitest: includes/projects/ft_printf/ft_printf_main.sh: line 159: 31193 Segmentation fault: 11  ./tmp/ft_printf_s sN "@moulitest: %s" ""$: invalid number
 //   1. (    0) -->@moulitest: includes/projects/ft_printf/ft_printf_main.sh: line 159: 31193 Segmentation fault: 11  ./tmp/ft_printf_s sN "@moulitest: %s" "NULL"$<--
 //   2. (   18) -->@moulitest: (null)<--
@@ -1031,12 +1042,12 @@ ft_printf("\n");
 //   2. (    2) -->-1<--
 
 // # 0109 (int)
-  ft_printf("% +d", 42); //error
+  ft_printf("% +d", 42);
 //   1. (    2) -->+d<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
 // # 0110 (int)
-  ft_printf("% +d", -42); //error
+  ft_printf("% +d", -42);
 //   1. (    2) -->+d<--
 //   2. (    3) -->-42<--
 ft_printf("\n");
