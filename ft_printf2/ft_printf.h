@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 20:16:42 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/17 19:11:01 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/10 22:27:12 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 typedef struct		 s_flag
 {
-	char			flag[3];
+	char			*flag;
 	int				width;
 	int				point;
 	char 			kind_width;
