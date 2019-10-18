@@ -584,7 +584,7 @@ ft_printf("\n");
 //   2. (    1) -->0<--
 ft_printf("\n");
 // # 0020 (int)
-  ft_printf("%x", 2);
+  ft_printf("%x", 2); //error
 //   1. (   -1) -->7<--
 //   2. (    1) -->0<--
 ft_printf("\n");
@@ -599,32 +599,32 @@ ft_printf("\n");
 //   2. (   10) -->2a        <--
 ft_printf("\n");
 // # 0023 (int)
-  ft_printf("%lx", 4294967296);
+  ft_printf("%lx", 4294967296); //error
 //   1. (    9) -->877777777<--
 //   2. (    9) -->100000000<--
 ft_printf("\n");
 // # 0024 (int)
-  ft_printf("%llX", 4294967296);
+  ft_printf("%llX", 4294967296); //error
 //   1. (    9) -->877777777<--
 //   2. (    9) -->100000000<--
 ft_printf("\n");
 // # 0025 (int)
-  ft_printf("%hx", 4294967296);
+  ft_printf("%hx", 4294967296); //error
 //   1. (    2) -->hx<--
 //   2. (    1) -->0<--
 ft_printf("\n");
 // # 0026 (int)
-  ft_printf("%hhX", 4294967296);
+  ft_printf("%hhX", 4294967296); //error
 //   1. (    3) -->hhX<--
 //   2. (    1) -->0<--
 ft_printf("\n");
 // # 0027 (int)
-  ft_printf("%llx", 9223372036854775807);
+  ft_printf("%llx", 9223372036854775807); //error
 //   1. (   18) -->>FFFFFFFFFFFFFFF<--
 //   2. (   16) -->7fffffffffffffff<--
 ft_printf("\n");
 // # 0028 (int)
-  ft_printf("%llx", 9223372036854775808);
+  ft_printf("%llx", 9223372036854775808); //error
 //   1. (   18) -->>FFFFFFFFFFFFFFF<--
 //   2. (   16) -->7fffffffffffffff<--
 ft_printf("\n");
@@ -659,12 +659,12 @@ ft_printf("\n");
 //   2. (    4) -->0x2a<--
 ft_printf("\n");
 // # 0035 (int)
-  ft_printf("%#llx", 9223372036854775807);
+  ft_printf("%#llx", 9223372036854775807); //error
 //   1. (   18) -->>FFFFFFFFFFFFFFF<--
 //   2. (   18) -->0x7fffffffffffffff<--
 ft_printf("\n");
 // # 0036 (int)
-  ft_printf("%#x", 0);
+  ft_printf("%#x", 0); //error
 //   1. (   -1) -->7<--
 //   2. (    1) -->0<--
 ft_printf("\n");
@@ -674,7 +674,7 @@ ft_printf("\n");
 //   2. (    4) -->0x2a<--
 ft_printf("\n");
 // # 0038 (int)
-  ft_printf("%#X", 42);
+  ft_printf("%#X", 42); //error
 //   1. (    1) -->9A<--
 //   2. (    4) -->0X2A<--
 ft_printf("\n");
@@ -694,17 +694,17 @@ ft_printf("\n");
 //   2. (    8) -->0x2a    <--
 ft_printf("\n");
 // # 0042 (int)
-  ft_printf("@moulitest: %#.x %#.0x", 0, 0);
+  ft_printf("@moulitest: %#.x %#.0x", 0, 0); //error
 //   1. (   11) -->@moulitest: 7 7<--
 //   2. (   13) -->@moulitest:  <--
 ft_printf("\n");
 // # 0043 (int)
-  ft_printf("@moulitest: %.x %.0x", 0, 0);
+  ft_printf("@moulitest: %.x %.0x", 0, 0); //error
 //   1. (   11) -->@moulitest: 7 7<--
 //   2. (   13) -->@moulitest:  <--
 ft_printf("\n");
 // # 0044 (int)
-  ft_printf("@moulitest: %5.x %5.0x", 0, 0);
+  ft_printf("@moulitest: %5.x %5.0x", 0, 0); //error
 //   1. (   11) -->@moulitest:      7      7<--
 //   2. (   23) -->@moulitest:            <--
 ft_printf("\n");
@@ -829,54 +829,54 @@ ft_printf("\n");
 //   2. (   18) -->thisisamultistring<--
 ft_printf("\n");
 // # 0069 (NULL)
-  ft_printf("@moulitest: %s", NULL);
+//   ft_printf("@moulitest: %s", NULL); //error
 // includes/projects/ft_printf/ft_printf_main.sh: line 206: printf: @moulitest: includes/projects/ft_printf/ft_printf_main.sh: line 159: 31193 Segmentation fault: 11  ./tmp/ft_printf_s sN "@moulitest: %s" ""$: invalid number
 //   1. (    0) -->@moulitest: includes/projects/ft_printf/ft_printf_main.sh: line 159: 31193 Segmentation fault: 11  ./tmp/ft_printf_s sN "@moulitest: %s" "NULL"$<--
 //   2. (   18) -->@moulitest: (null)<--
 ft_printf("\n");
 // # 0070 (NULL)
-  ft_printf("%.2c", NULL);
+//   ft_printf("%.2c", NULL); //error
 //   1. (    1) -->c<--
 //   2. (    1) -->^@<--
 ft_printf("\n");
 // # 0071 (NULL)
-  ft_printf("%s %s", NULL, "string");
+//   ft_printf("%s %s", NULL, "string"); //error
 // includes/projects/ft_printf/ft_printf_main.sh: line 206: printf: includes/projects/ft_printf/ft_printf_main.sh: line 159: 31299 Segmentation fault: 11  ./tmp/ft_printf_s sN "%s %s" "" "string"$: invalid number
 //   1. (    0) -->includes/projects/ft_printf/ft_printf_main.sh: line 159: 31299 Segmentation fault: 11  ./tmp/ft_printf_s sN "%s %s" "NULL" "string"$<--
 //   2. (   13) -->(null) string<--
 ft_printf("\n");
 // # 0072 (char)
-  ft_printf("%c", 42);
+  ft_printf("%c", 42); //error
 //   1. (    1) -->c<--
 //   2. (    1) -->*<--
 ft_printf("\n");
 // # 0073 (char)
-  ft_printf("%5c", 42);
+  ft_printf("%5c", 42); //error
 //   1. (    1) -->c<--
 //   2. (    5) -->    *<--
 ft_printf("\n");
 // # 0074 (char)
-  ft_printf("%-5c", 42);
+  ft_printf("%-5c", 42); //error
 //   1. (    1) -->c<--
 //   2. (    5) -->*    <--
 ft_printf("\n");
 // # 0075 (char)
-  ft_printf("@moulitest: %c", 0);
+  ft_printf("@moulitest: %c", 0); //error
 //   1. (   13) -->@moulitest: c<--
 //   2. (   13) -->@moulitest: ^@<--
 ft_printf("\n");
 // # 0076 (char)
-  ft_printf("%2c", 0);
+  ft_printf("%2c", 0); //error
 //   1. (    1) -->c<--
 //   2. (    2) --> ^@<--
 ft_printf("\n");
 // # 0077 (char)
-  ft_printf("null %c and text", 0);
+  ft_printf("null %c and text", 0); //error
 //   1. (   15) -->null c and text<--
 //   2. (   15) -->null ^@ and text<--
 ft_printf("\n");
 // # 0078 (char)
-  ft_printf("% c", 0);
+  ft_printf("% c", 0); //error
 //   1. (    1) -->c<--
 //   2. (    1) -->^@<--
 ft_printf("\n");
@@ -931,17 +931,17 @@ ft_printf("\n");
 //   2. (   13) -->@moulitest: 0<--
 ft_printf("\n");
 // # 0089 (int)
-  ft_printf("@moulitest: %.o %.0o", 0, 0);
+  ft_printf("@moulitest: %.o %.0o", 0, 0); //error
 //   1. (   11) -->@moulitest: 0 0<--
 //   2. (   13) -->@moulitest:  <--
 ft_printf("\n");
 // # 0090 (int)
-  ft_printf("@moulitest: %5.o %5.0o", 0, 0);
+  ft_printf("@moulitest: %5.o %5.0o", 0, 0); //error
 //   1. (   11) -->@moulitest:      0      0<--
 //   2. (   23) -->@moulitest:            <--
 ft_printf("\n");
 // # 0091 (int)
-  ft_printf("@moulitest: %#.o %#.0o", 0, 0);
+  ft_printf("@moulitest: %#.o %#.0o", 0, 0); //error
 //   1. (   11) -->@moulitest: 00 00<--
 //   2. (   15) -->@moulitest: 0 0<--
 ft_printf("\n");
@@ -1031,17 +1031,17 @@ ft_printf("\n");
 //   2. (    2) -->-1<--
 
 // # 0109 (int)
-  ft_printf("% +d", 42);
+  ft_printf("% +d", 42); //error
 //   1. (    2) -->+d<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
 // # 0110 (int)
-  ft_printf("% +d", -42);
+  ft_printf("% +d", -42); //error
 //   1. (    2) -->+d<--
 //   2. (    3) -->-42<--
 ft_printf("\n");
 // # 0111 (int)
-  ft_printf("%+ d", 42);
+  ft_printf("%+ d", 42); //error
 //   1. (    1) --> 42<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
@@ -1051,17 +1051,17 @@ ft_printf("\n");
 //   2. (    3) -->-42<--
 ft_printf("\n");
 // # 0113 (int)
-  ft_printf("%  +d", 42);
+  ft_printf("%  +d", 42); //error
 //   1. (    2) -->+d<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
 // # 0114 (int)
-  ft_printf("%  +d", -42);
+  ft_printf("%  +d", -42); //error
 //   1. (    2) -->+d<--
 //   2. (    3) -->-42<--
 ft_printf("\n");
 // # 0115 (int)
-  ft_printf("%+  d", 42);
+  ft_printf("%+  d", 42); //error
 //   1. (    1) --> 42<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
@@ -1071,17 +1071,17 @@ ft_printf("\n");
 //   2. (    3) -->-42<--
 ft_printf("\n");
 // # 0117 (int)
-  ft_printf("% ++d", 42);
+  ft_printf("% ++d", 42); //error
 //   1. (    3) -->++d<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
 // # 0118 (int)
-  ft_printf("% ++d", -42);
+  ft_printf("% ++d", -42); //error
 //   1. (    3) -->++d<--
 //   2. (    3) -->-42<--
 ft_printf("\n");
 // # 0119 (int)
-  ft_printf("%++ d", 42);
+  ft_printf("%++ d", 42); //error
 //   1. (    1) --> 42<--
 //   2. (    3) -->+42<--
 ft_printf("\n");
@@ -1151,7 +1151,7 @@ ft_printf("\n");
 //   2. (    5) -->-42  <--
 ft_printf("\n");
 // # 0133 (short)
-  ft_printf("%hd", 32767);
+  ft_printf("%hd", 32767); //error
 //   1. (    2) -->hd<--
 //   2. (    5) -->32767<--
 ft_printf("\n");
@@ -1161,7 +1161,7 @@ ft_printf("\n");
 //   2. (    1) -->0<--
 ft_printf("\n");
 // # 0135 (short)
-  ft_printf("%hd", 32768);
+  ft_printf("%hd", 32768); //error
 //   1. (    2) -->hd<--
 //   2. (    6) -->-32768<--
 ft_printf("\n");
@@ -1171,22 +1171,22 @@ ft_printf("\n");
 //   2. (    1) -->0<--
 
 // # 0137 (signed char)
-  ft_printf("%hhd", 127);
+  ft_printf("%hhd", 127); //error
 //   1. (    3) -->hhd<--
 //   2. (    3) -->127<--
 ft_printf("\n");
 // # 0138 (signed char)
-  ft_printf("%hhd", 128);
+  ft_printf("%hhd", 128); //error
 //   1. (    3) -->hhd<--
 //   2. (    4) -->-128<--
 ft_printf("\n");
 // # 0139 (signed char)
-  ft_printf("%hhd", -128);
+  ft_printf("%hhd", -128); //error
 //   1. (    3) -->hhd<--
 //   2. (    4) -->-128<--
 ft_printf("\n");
 // # 0140 (signed char)
-  ft_printf("%hhd", -129);
+  ft_printf("%hhd", -129); //error
 //   1. (    3) -->hhd<--
 //   2. (    3) -->127<--
 ft_printf("\n");
@@ -1206,7 +1206,7 @@ ft_printf("\n");
 //   2. (   10) -->2147483648<--
 ft_printf("\n");
 // # 0144 (long)
-  ft_printf("%ld", -2147483649);
+  ft_printf("%ld", -2147483649); //error
 //   1. (    9) -->-2147483649<--
 //   2. (   11) -->-2147483649<--
 ft_printf("\n");
@@ -1216,7 +1216,7 @@ ft_printf("\n");
 //   2. (   19) -->9223372036854775807<--
 ft_printf("\n");
 // # 0146 (long long)
-  ft_printf("%lld", -9223372036854775808);
+  ft_printf("%lld", -9223372036854775808); //error
 //   1. (   18) -->-(<--
 //   2. (   20) -->-9223372036854775808<--
 ft_printf("\n");
@@ -1271,7 +1271,7 @@ ft_printf("\n");
 //   2. (   10) -->04242     <--
 ft_printf("\n");
 // # 0157 (int)
-  ft_printf("% 10.5d", 4242);
+  ft_printf("% 10.5d", 4242); //error
 //   1. (    3) -->.5d<--
 //   2. (   10) -->     04242<--
 ft_printf("\n");
@@ -1286,7 +1286,7 @@ ft_printf("\n");
 //   2. (   10) -->+04242    <--
 ft_printf("\n");
 // # 0160 (int)
-  ft_printf("%03.2d", 0);
+  ft_printf("%03.2d", 0); //error
 //   1. (   -1) --> 000<--
 //   2. (    3) --> 00<--
 ft_printf("\n");
@@ -1311,12 +1311,12 @@ ft_printf("\n");
 //   2. (   17) -->@moulitest: 42 43<--
 ft_printf("\n");
 // # 0165 (int)
-  ft_printf("@moulitest: %.d %.0d", 0, 0);
+  ft_printf("@moulitest: %.d %.0d", 0, 0); //error
 //   1. (   11) -->@moulitest: 0 0<--
 //   2. (   13) -->@moulitest:  <--
 ft_printf("\n");
 // # 0166 (int)
-  ft_printf("@moulitest: %5.d %5.0d", 0, 0);
+  ft_printf("@moulitest: %5.d %5.0d", 0, 0); //error
 //   1. (   11) -->@moulitest:      0      0<--
 //   2. (   23) -->@moulitest:            <--
 ft_printf("\n");
@@ -1366,12 +1366,12 @@ ft_printf("\n");
 //   2. (   15) -->000004294967295<--
 ft_printf("\n");
 // # 0176 (unsigned int)
-  ft_printf("% u", 4294967295);
+  ft_printf("% u", 4294967295); //error
 //   1. (    9) --> 4294967295<--
 //   2. (   10) -->4294967295<--
 ft_printf("\n");
 // # 0177 (unsigned int)
-  ft_printf("%+u", 4294967295);
+  ft_printf("%+u", 4294967295); //error
 //   1. (    9) -->+4294967295<--
 //   2. (   10) -->4294967295<--
 ft_printf("\n");
@@ -1381,11 +1381,11 @@ ft_printf("\n");
 //   2. (   10) -->4294967295<--
 ft_printf("\n");
 // # 0179 (unsigned long)
-  ft_printf("%lu", 4294967296);
+  ft_printf("%lu", 4294967296); //error
 //   1. (    9) -->4294967296<--
 //   2. (   10) -->4294967296<--
 ft_printf("\n");
-// # 0180 (unsigned long)
+// # 0180 (unsigned long) //error
   ft_printf("%lu", -42);
 //   1. (    1) -->-42<--
 //   2. (   20) -->18446744073709551574<--
