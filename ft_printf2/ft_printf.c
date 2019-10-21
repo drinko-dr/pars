@@ -1,3 +1,10 @@
+// add flag p
+// else if (**str == 'p')
+// 	{
+// 		(*flag)->point = 17;
+// 		(*flag)->flag = "X\0\0";
+// 		len += flag_d((unsigned int)va_arg(*ap, unsigned int), flag, &print_base, 16);
+// 	}
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
