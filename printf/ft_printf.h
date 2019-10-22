@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 20:16:42 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 00:11:25 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/22 23:04:11 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,18 @@ int					ft_printf(char *format, ...);
 int					print_position(intmax_t num, t_flag **flag,
 					int fun(intmax_t, int, t_flag*), int base);
 void				kludge_s(t_flag **flag, char *ap, int x, int count);
-void				kludge_pp(t_flag **flag, int base, int num);
+void				kludge_pp(t_flag **flag, int base, intmax_t num);
+void				el(t_flag *flag, int *len, int base);
+
+int			count_ubase(uintmax_t num, int base);
+int			flag_u(uintmax_t num, t_flag **flag, int base);
+int		num_ucount(uintmax_t num, int base);
+int		check_uzero(int *count, uintmax_t num, t_flag **flag);
+void	calc_uposition(t_flag **flag, int count, int base);
+int			print_uposition(uintmax_t num, t_flag **flag, int base);
+void	kludge_upp(t_flag **flag, int base, uintmax_t num);
+int			print_ubase(uintmax_t num, int base, t_flag *flag);
+int			ft_putunbr(uintmax_t num, int base, t_flag *flag);
+int			print_unum(uintmax_t num, t_flag *flag, int base);
 
 #endif

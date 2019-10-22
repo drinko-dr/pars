@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 23:19:07 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/21 23:20:37 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/22 21:28:19 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	kludge_s(t_flag **flag, char *ap, int x, int count)
 	}
 }
 
-void	kludge_pp(t_flag **flag, int base, int num)
+void	kludge_pp(t_flag **flag, int base, intmax_t num)
 {
 	if ((*flag)->octothorp == '#' && base == 16 && num != 0)
 	{

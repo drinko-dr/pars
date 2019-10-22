@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:24:16 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 00:12:29 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/22 23:21:21 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ void	calc_position(t_flag **flag, int count, int base, intmax_t num)
 		(*flag)->point = (*flag)->point - count;
 	}
 	(*flag)->width -= count;
-	if (((num < 0 || (*flag)->plus == '+') && base == 10) ||
+	if (((num < 0 || (*flag)->plus == '+' || ((*flag)->plus == ' '
+	&& (*flag)->point == -1)) && base == 10) ||
 			((*flag)->octothorp == '#' && base == 8))
 	{
 		(*flag)->width -= 1;

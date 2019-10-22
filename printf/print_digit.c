@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:15:51 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/21 23:09:24 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/22 21:52:34 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int			ft_putnbr(intmax_t num, int base, t_flag *flag)
 	return (n);
 }
 
-static void	el(t_flag *flag, int *len, int base)
+void	el(t_flag *flag, int *len, int base)
 {
 	if (flag->plus == '+' && base == 10)
 		write(1, "+", *len += 1);
