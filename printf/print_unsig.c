@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/22 21:50:37 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 23:09:48 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 23:37:13 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ int			print_ubase(uintmax_t num, int base, t_flag *flag)
 
 	n = 1;
 	c = 'a';
+	if (flag->point == 0 && flag->flag != NULL && flag->flag[0] == 'p')
+		return (0);
 	if (num / base > 0)
 		n += print_ubase(num / base, base, flag);
 	if (flag->flag != NULL && (flag->flag[0] == 'X' || flag->flag[1] == 'X' ||
@@ -57,7 +59,10 @@ int			print_unum(uintmax_t num, t_flag *flag, int base)
 	int		x;
 
 	len = 0;
-	if (num == 0 && flag->point == 0)
+	x = 0;
+	if (flag->flag != NULL && flag->flag[0] == 'p')
+		x = 1;
+	if (x == 0 && num == 0 && flag->point == 0)
 		return (0);
 	el(flag, &len, base);
 	x = flag->point;

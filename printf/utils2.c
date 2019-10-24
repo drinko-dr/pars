@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:24:16 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 23:21:21 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 21:29:03 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	list_start(t_flag **node)
 
 void	calc_position(t_flag **flag, int count, int base, intmax_t num)
 {
-	if ((*flag)->point != -1 || (*flag)->position != '\0')
+	if ((*flag)->point > 0 || (*flag)->position != '\0')
 	{
 		(*flag)->kind_width = ' ';
 		(*flag)->point - count > 0 ?

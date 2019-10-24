@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:15:51 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 21:52:34 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 22:39:34 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int			print_base(intmax_t num, int base, t_flag *flag)
 
 	n = 1;
 	c = 'a';
+	if (flag->point == 0)
+		return (0);
 	if (num / base > 0)
 		n += print_base(num / base, base, flag);
 	if (flag->flag != NULL && (flag->flag[0] == 'X' || flag->flag[1] == 'X' ||
@@ -66,7 +68,10 @@ int			print_num(intmax_t num, t_flag *flag,
 	int		x;
 
 	len = 0;
-	if (num == 0 && flag->point == 0)
+	x = 0;
+	if (flag->flag != NULL && flag->flag[0] == 'p')
+		x = 1;
+	if (x == 0 && num == 0 && flag->point == 0)
 		return (0);
 	if (num < 0)
 	{

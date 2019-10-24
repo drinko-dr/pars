@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:22:32 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/21 20:23:24 by lvania           ###   ########.fr       */
+/*   Updated: 2019/10/24 21:53:06 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,9 @@ void	plus(char **str, t_flag **flag)
 
 void	width(char **str, t_flag **flag, va_list *ap)
 {
+	int		x;
+
+	x = 0;
 	if (**str == '0')
 	{
 		while (**str == '0')
@@ -75,8 +78,12 @@ void	width(char **str, t_flag **flag, va_list *ap)
 	if (**str == '*')
 	{
 		(*flag)->width = va_arg(*ap, int);
+		if ((*flag)->width < 0)
+		{
+			(*flag)->position = '-';
+			(*flag)->width *= -1;
+		}
 		(*str)++;
 	}
-	else
-		(*flag)->width = get_digit(str);
+	(x = get_digit(str)) > 0 ? (*flag)->width = x : 0;
 }

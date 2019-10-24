@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:31:04 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 22:46:41 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 23:37:53 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,11 @@ int			easy_flag(va_list *ap, t_flag **flag, char **str)
 	{
 		(*flag)->octothorp = '#';
 		(*flag)->flag = "p\0\0";
-		len = flag_d((unsigned long long)va_arg
-(*ap, unsigned long long int), flag, &print_base, 16);
+		(*flag)->width -= 2;
+// 				len = flag_d((unsigned long long)va_arg
+// (*ap, unsigned long long int), flag, &print_base, 16);
+		len = flag_u((unsigned long long)va_arg
+(*ap, unsigned long long int), flag, 16);
 	}
 	else
 		return (0);

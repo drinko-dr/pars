@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:27:13 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 20:30:37 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 23:27:37 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int			flag_c(char ap, t_flag **flag)
 	int		x;
 
 	count = 1;
-	if ((*flag)->point != -1)
+	if ((*flag)->point != -1 && ap != 0)
 	{
 		(*flag)->point - count > 0 ? 0 : (count = (*flag)->point);
 	}
@@ -49,7 +49,7 @@ int			flag_s(char *ap, t_flag **flag)
 		count = ft_strlen(ap);
 	else
 		write(1, "(null)", (count = 6));
-	if ((*flag)->point != -1)
+	if ((*flag)->point > -1)
 	{
 		(*flag)->point - count > 0 ? 0 : (count = (*flag)->point);
 	}

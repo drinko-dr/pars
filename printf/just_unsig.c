@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/22 21:29:33 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 23:03:18 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 23:27:45 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ int		check_uzero(int *count, uintmax_t num, t_flag **flag)
 {
 	if (num == 0 && (*flag)->point == 0)
 		*count = 0;
+	if((*flag)->flag != NULL && (*flag)->flag[0] == 'p' )
+		return (1);
 	if ((*count != 0 && num == 0 && (*flag)->octothorp == '#') ||
 	(num == 0 && (*flag)->octothorp == '#' && (*flag)->flag != NULL &&
 	(((*flag)->flag[0] == 'o' || (*flag)->flag[1] == 'o' ||
@@ -83,11 +85,14 @@ void	kludge_upp(t_flag **flag, int base, uintmax_t num)
 {
 	if ((*flag)->octothorp == '#' && base == 16 && num != 0)
 	{
-		(*flag)->width -= 2;
+		if ((*flag)->flag != NULL && (*flag)->flag[0] != 'p')
+			(*flag)->width -= 2;
 		if ((*flag)->point == -1 && (*flag)->kind_width == '0')
 		{
 			(*flag)->point = (*flag)->width;
 			(*flag)->width = 0;
 		}
 	}
+	if ((*flag)->octothorp == '#' && base == 8 && (*flag)->point > 0)
+		(*flag)->point--;
 }

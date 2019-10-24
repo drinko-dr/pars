@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:23:43 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 23:33:17 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/24 23:35:43 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,12 @@ int		ft_printf(char *format, ...)
 // int main()
 // {
 //     int i;
-//     // ft_printf("%hhx, %hhx\n", 0, UCHAR_MAX);
-// 	ft_printf("%.u, %.0u", 0, 0);
-// 	// ft_printf("%hx, %hx", 0, USHRT_MAX);
-//     // printf("%lu, %llu", 0ul, INTMAX_MAX);
+// //     ft_printf("%hhx, %hhx\n", 0, UCHAR_MAX);
+// // 	ft_printf("%#.3o", 1);
+// // ft_printf("{%5p}", 0);
+// ft_printf("%.0p, %.p", 0, 0);
+// // 	ft_printf("%hx, %hx", 0, USHRT_MAX);
+// //     printf("%lu, %llu", 0ul, INTMAX_MAX);
 // //  printf("%p\n", 0);
 // //  ft_printf("%p", 0);
 //     return (0);
