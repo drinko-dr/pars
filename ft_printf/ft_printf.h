@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 20:16:42 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/22 23:04:11 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/31 22:58:29 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef struct		s_flag
 {
 	char			*flag;
 	int				width;
-	int				point;
+	intmax_t		point;
 	char			kind_width;
 	char			position;
 	char			plus;
@@ -81,5 +81,12 @@ void	kludge_upp(t_flag **flag, int base, uintmax_t num);
 int			print_ubase(uintmax_t num, int base, t_flag *flag);
 int			ft_putunbr(uintmax_t num, int base, t_flag *flag);
 int			print_unum(uintmax_t num, t_flag *flag, int base);
+
+int		f_flag(va_list *ap, t_flag **flag, char **str);
+int		print_flag_f(double num, t_flag **flag);
+int			print_str_position(char *mass, t_flag *flag);
+void ft_putstr(char *str);
+uintmax_t pow_ten(int n);
+char	*save_digit(intmax_t *befor, uintmax_t *after, int count, int count2);
 
 #endif

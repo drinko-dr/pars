@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:23:43 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/30 19:14:49 by drinko           ###   ########.fr       */
+/*   Updated: 2019/10/31 23:00:07 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,23 @@ int		ft_printf(char *format, ...)
 	return (len);
 }
 
-// #include <stdio.h>
-// #include "ft_printf.h"
-// #include <limits.h>
+#include <stdio.h>
+#include "ft_printf.h"
+#include <limits.h>
 
-// int main()
-// {
-//     int i;
-// //     ft_printf("%hhx, %hhx\n", 0, UCHAR_MAX);
-// // 	ft_printf("%#.3o", 1);
-// // ft_printf("{%5p}", 0);
-// ft_printf("%.0d, %.d", 0, 0);
-// // 	ft_printf("%hx, %hx", 0, USHRT_MAX);
-// //     printf("%lu, %llu", 0ul, INTMAX_MAX);
-// //  printf("%p\n", 0);
-// //  ft_printf("%p", 0);
-//     return (0);
-// }
+int main()
+{
+    int i;
+//     ft_printf("%hhx, %hhx\n", 0, UCHAR_MAX);
+// 	ft_printf("%#.3o", 1);
+// ft_printf("{%5p}", 0);
+i = ft_printf("{%f}{%lf}{%Lf}", -1.42, -1.42, -1.42l);
+printf("%d\n", i);
+i = printf("{%f}{%lf}{%Lf}", -1.42, -1.42, -1.42l);
+printf("%d\n", i);
+// 	ft_printf("%hx, %hx", 0, USHRT_MAX);
+//     printf("%lu, %llu", 0ul, INTMAX_MAX);
+//  printf("%p\n", 0);
+//  ft_printf("%p", 0);
+    return (0);
+}
