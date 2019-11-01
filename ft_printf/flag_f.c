@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   flag_f.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/30 19:21:46 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/31 23:20:49 by drinko           ###   ########.fr       */
+/*   Updated: 2019/11/01 15:19:08 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		f_flag(va_list *ap, t_flag **flag, char **str)
 		len = print_flag_f((long double)va_arg(*ap, double),
 		flag);
 	else if ((!ft_strncmp(*str, "Lf", 1)) && (n += 2))
-		len = print_flag_f((long double)va_arg(*ap, long double),
+		len = print_flag_f((long double)va_arg(*ap, double),
 		flag);
 	else
 		return (0);
@@ -41,15 +41,23 @@ int		len_digit_f(t_flag *flag, int count)
 	return (count);
 }
 
-// void	check_num(intmax_t *befor, uintmax_t *after, int count, int count2)
-// {
-// 	if (*num < 0)
-// 	{
-// 		(*num) *= -1;
-// 		(*count2) += 1;
-// 	}
-// }
-
+void	check_num(intmax_t befor, double *num)
+{
+	if (*num < 0)
+	{
+		*num *= -1;
+		*num = *num - (befor * -1);
+	}
+	else
+		*num = *num - befor;
+}
+void	calc_point(t_flag **flag)
+{
+	if ((*flag)->point == -1)
+		(*flag)->point = 1000000;
+	else
+		(*flag)->point = pow_ten((*flag)->point);
+}
 int		print_flag_f(double num, t_flag **flag)
 {
 	int		count;
@@ -59,10 +67,7 @@ int		print_flag_f(double num, t_flag **flag)
 	char	*mass;
 
 	count = 0;
-	if ((*flag)->point == -1)
-		(*flag)->point = 1000000;
-	else
-		(*flag)->point = pow_ten((*flag)->point);
+	calc_point(flag);
 	count = num_count(num);
 	if (num == 0)
 	{
@@ -70,15 +75,14 @@ int		print_flag_f(double num, t_flag **flag)
 		num += 1;
 	}
 	temp_bef = num;
-	if (num < 0)
-		num *= -1;
+	check_num(temp_bef, &num);
 	temp_aft = num * (*flag)->point;
-	count2 = num_count(temp_aft);
+	count2 = count + num_count(temp_aft);
 	mass = save_digit(&temp_bef, &temp_aft, count, count2);
 	if (mass != NULL)
-		(*flag)->width -= (count2 + 1);
+		(*flag)->width -= (count2 = ft_strlen(mass));
 	print_str_position(mass, *flag);
-	return (len_digit_f((*flag), (count2 + 1)));
+	return (len_digit_f((*flag), count2));
 }
 
 int			print_str_position(char *mass, t_flag *flag)
@@ -118,27 +122,34 @@ uintmax_t pow_ten(int n)
 		num *= 10;
 	return (num);
 }
+char	*create_mass(intmax_t *befor, int *count, int *count2, int *temp)
+{	char	*mass;
+
+	mass = NULL;
+	if (!(mass = (char*)malloc(sizeof(char) * ((*count) + (*count2) + 2))))
+		return (NULL);
+	if (*befor < 0)
+	{
+		*befor *= -1;
+		*count2 += 1;
+		*count += 1;
+		mass[0] = '-';
+	}
+	*temp = *count;
+	mass[*count] = '.';
+	mass[*count2 + 1] = '\0';
+	return (mass);
+}
 
 char	*save_digit(intmax_t *befor, uintmax_t *after, int count, int count2)
 {
 	char	*mass;
 	int		temp;
 
-	mass = NULL;
-	temp = count;
-	if (!(mass = (char*)malloc(sizeof(char) * ((count) + (count2) + 2))))
-		return (0);
-	if (*befor < 0)
-	{
-		*befor *= -1;
-		// *after *= -1;
-		count2 += 1;
-		count += 1;
-		mass[0] = '-';	
-	}
-	mass[count] = '.';
-	mass[count2 + 1] = '\0';
-	while (count - 1 >= 0)
+	temp = 0;
+	if (!(mass = create_mass(befor, &count, &count2, &temp)))
+		return (NULL);
+	while (count - 1 >= 0 && *befor != 0)
 	{
 		mass[count - 1] = (*befor % 10) + '0';
 		*befor /= 10;
