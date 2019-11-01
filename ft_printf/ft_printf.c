@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:23:43 by drinko            #+#    #+#             */
-/*   Updated: 2019/11/01 14:59:15 by marvin           ###   ########.fr       */
+/*   Updated: 2019/11/02 00:38:31 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,25 +72,4 @@ int		ft_printf(char *format, ...)
 	free(flag);
 	va_end(ap);
 	return (len);
-}
-
-#include <stdio.h>
-#include "ft_printf.h"
-#include <limits.h>
-
-int main()
-{
-    int i;
-//     ft_printf("%hhx, %hhx\n", 0, UCHAR_MAX);
-// 	ft_printf("%#.3o", 1);
-// ft_printf("{%5p}", 0);
-i = ft_printf("{%15.15f}{%.15lf}{%.15Lf}",  -123456789.123456789012345, -1.123456789012345, -1.123456789012345);
-printf("%d\n", i);
-i = printf("{%15.15f}{%.15lf}{%.15Lf}", -123456789.123456789012345, -1.123456789012345, -1.123456789012345);
-printf("%lld\n", INTMAX_MAX);
-// 	ft_printf("%hx, %hx", 0, USHRT_MAX);
-//     printf("%lu, %llu", 0ul, INTMAX_MAX);
-//  printf("%p\n", 0);
-//  ft_printf("%p", 0);
-    return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/22 21:29:33 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/24 23:27:45 by drinko           ###   ########.fr       */
+/*   Updated: 2019/11/02 00:53:24 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int			flag_u(uintmax_t num, t_flag **flag, int base)
 	return (len_digit(*flag, count));
 }
 
-int		num_ucount(uintmax_t num, int base)
+int			num_ucount(uintmax_t num, int base)
 {
 	int count;
 
@@ -43,11 +43,11 @@ int		num_ucount(uintmax_t num, int base)
 	return (count);
 }
 
-int		check_uzero(int *count, uintmax_t num, t_flag **flag)
+int			check_uzero(int *count, uintmax_t num, t_flag **flag)
 {
 	if (num == 0 && (*flag)->point == 0)
 		*count = 0;
-	if((*flag)->flag != NULL && (*flag)->flag[0] == 'p' )
+	if ((*flag)->flag != NULL && (*flag)->flag[0] == 'p')
 		return (1);
 	if ((*count != 0 && num == 0 && (*flag)->octothorp == '#') ||
 	(num == 0 && (*flag)->octothorp == '#' && (*flag)->flag != NULL &&
@@ -60,7 +60,7 @@ int		check_uzero(int *count, uintmax_t num, t_flag **flag)
 	return (1);
 }
 
-void	calc_uposition(t_flag **flag, int count, int base)
+void		calc_uposition(t_flag **flag, int count, int base)
 {
 	if ((*flag)->point != -1 || (*flag)->position != '\0')
 	{
@@ -81,7 +81,7 @@ void	calc_uposition(t_flag **flag, int count, int base)
 	}
 }
 
-void	kludge_upp(t_flag **flag, int base, uintmax_t num)
+void		kludge_upp(t_flag **flag, int base, uintmax_t num)
 {
 	if ((*flag)->octothorp == '#' && base == 16 && num != 0)
 	{

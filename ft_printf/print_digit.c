@@ -6,31 +6,11 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:15:51 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/30 22:47:04 by drinko           ###   ########.fr       */
+/*   Updated: 2019/11/02 00:52:43 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-// int			print_base(intmax_t num, int base, t_flag *flag)
-// {
-// 	int		n;
-// 	// char	c;
-
-// 	n = 1;
-// 	// c = 'a';
-// 	// if (flag->point == 0)
-// 	// 	return (0);
-// 	// if (num / base > 0)
-// 	// 	n += print_base(num / base, base, flag);
-// 	// if (flag->flag != NULL && (flag->flag[0] == 'X' || flag->flag[1] == 'X' ||
-// 	// 			flag->flag[2] == 'X'))
-// 	// 	c = 'A';
-// 	// num = num % base;
-// 	// num += (num > 9 ? c - 10 : '0');
-// 	// write(1, &num, 1);
-// 	return (n);
-// }
 
 int			ft_putnbr(intmax_t num, int base, t_flag *flag)
 {
@@ -45,7 +25,7 @@ int			ft_putnbr(intmax_t num, int base, t_flag *flag)
 	return (n);
 }
 
-void	el(t_flag *flag, int *len, int base)
+void		el(t_flag *flag, int *len, int base)
 {
 	if (flag->plus == '+' && base == 10)
 		write(1, "+", *len += 1);
@@ -69,10 +49,12 @@ int			print_num(intmax_t num, t_flag *flag,
 
 	len = 0;
 	x = 0;
-	// if (flag->flag != NULL && flag->flag[0] == 'p')
-	// 	x = 1;
-	if (x == 0 && num == 0 && flag->point == 0)
+	if (num == 0 && flag->point == 0)
+	{
+		if (flag->plus == ' ' && write(1, " ", 1))
+			return (1);
 		return (0);
+	}
 	if (num < 0)
 	{
 		write(1, "-", len += 1);

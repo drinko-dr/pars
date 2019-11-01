@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:34:18 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/30 20:48:56 by drinko           ###   ########.fr       */
+/*   Updated: 2019/11/02 00:48:52 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@ int		check_zero(int *count, intmax_t num, t_flag **flag)
 	if (num == 0 && (*flag)->point == 0)
 		*count = 0;
 	if ((*count != 0 && num == 0 && (*flag)->octothorp == '#'))
-	// ||
-	// (num == 0 && (*flag)->octothorp == '#' && (*flag)->flag != NULL &&
-	// (((*flag)->flag[0] == 'o' || (*flag)->flag[1] == 'o' ||
-	// (*flag)->flag[2] == 'o'))))
 	{
 		write(1, "0", 1);
 		return (0);

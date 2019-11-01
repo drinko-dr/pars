@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 19:27:13 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/30 20:49:01 by drinko           ###   ########.fr       */
+/*   Updated: 2019/11/02 00:50:59 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,16 +60,13 @@ int			flag_s(char *ap, t_flag **flag)
 	kludge_s(flag, ap, x, count);
 	return (len_str(*flag, count));
 }
-intmax_t num = (int)24;
+
 int			flag_d(intmax_t num, t_flag **flag,
 		int fun(intmax_t, int, t_flag*), int base)
 {
 	int		count;
 
 	count = 0;
-	// if ((*flag)->flag != NULL && ((*flag)->flag[0] == 'u' ||
-	// 			(*flag)->flag[1] == 'u' || (*flag)->flag[2] == 'u'))
-	// 	(*flag)->plus = '\0';
 	if (num == -9223372036854775807 - 1)
 	{
 		write(1, "-9223372036854775808", 20);

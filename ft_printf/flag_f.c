@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   flag_f.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/30 19:21:46 by drinko            #+#    #+#             */
-/*   Updated: 2019/11/01 15:19:08 by marvin           ###   ########.fr       */
+/*   Created: 2019/11/01 22:56:19 by drinko            #+#    #+#             */
+/*   Updated: 2019/11/02 00:44:00 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
 int		f_flag(va_list *ap, t_flag **flag, char **str)
 {
 	int		len;
@@ -19,12 +20,12 @@ int		f_flag(va_list *ap, t_flag **flag, char **str)
 	len = 0;
 	n = 0;
 	if ((**str == 'f') && (n += 1))
-		len = print_flag_f((long double)va_arg(*ap, double), flag);
+		len = print_flag_f((double)va_arg(*ap, double), flag);
 	else if ((!ft_strncmp(*str, "lf", 1)) && (n += 2))
-		len = print_flag_f((long double)va_arg(*ap, double),
+		len = print_flag_f((double)va_arg(*ap, double),
 		flag);
 	else if ((!ft_strncmp(*str, "Lf", 1)) && (n += 2))
-		len = print_flag_f((long double)va_arg(*ap, double),
+		len = print_flag_f((long double)va_arg(*ap, long double),
 		flag);
 	else
 		return (0);
@@ -32,51 +33,23 @@ int		f_flag(va_list *ap, t_flag **flag, char **str)
 	return (len);
 }
 
-int		len_digit_f(t_flag *flag, int count)
+int		print_flag_f(long double num, t_flag **flag)
 {
-	if (flag->width > 0)
-		count += flag->width;
-	if (flag->plus != '\0')
-		count++;
-	return (count);
-}
-
-void	check_num(intmax_t befor, double *num)
-{
-	if (*num < 0)
-	{
-		*num *= -1;
-		*num = *num - (befor * -1);
-	}
-	else
-		*num = *num - befor;
-}
-void	calc_point(t_flag **flag)
-{
-	if ((*flag)->point == -1)
-		(*flag)->point = 1000000;
-	else
-		(*flag)->point = pow_ten((*flag)->point);
-}
-int		print_flag_f(double num, t_flag **flag)
-{
-	int		count;
-	int		count2;
-	intmax_t		temp_bef;
-	uintmax_t		temp_aft;
-	char	*mass;
+	int			count;
+	int			count2;
+	intmax_t	temp_bef;
+	uintmax_t	temp_aft;
+	char		*mass;
 
 	count = 0;
 	calc_point(flag);
 	count = num_count(num);
-	if (num == 0)
-	{
-		count = 1;
-		num += 1;
-	}
 	temp_bef = num;
+	if (temp_bef == 0 && num != 0)
+		num += 1;
 	check_num(temp_bef, &num);
 	temp_aft = num * (*flag)->point;
+	temp_aft % 10 > 4 ? temp_aft += 1 : 0;
 	count2 = count + num_count(temp_aft);
 	mass = save_digit(&temp_bef, &temp_aft, count, count2);
 	if (mass != NULL)
@@ -85,7 +58,7 @@ int		print_flag_f(double num, t_flag **flag)
 	return (len_digit_f((*flag), count2));
 }
 
-int			print_str_position(char *mass, t_flag *flag)
+int		print_str_position(char *mass, t_flag *flag)
 {
 	int		len;
 	int		x;
@@ -104,26 +77,13 @@ int			print_str_position(char *mass, t_flag *flag)
 			write(1, &flag->kind_width, 1);
 		ft_putstr(mass);
 	}
+	free(mass);
 	return (len);
 }
 
-void ft_putstr(char *str)
-{
-	while(*str != '\0')
-		write(1, str++, 1);
-}
-
-uintmax_t pow_ten(int n)
-{
-	uintmax_t		num;
-
-	num = 1;
-	while (n-- > 0)
-		num *= 10;
-	return (num);
-}
 char	*create_mass(intmax_t *befor, int *count, int *count2, int *temp)
-{	char	*mass;
+{
+	char	*mass;
 
 	mass = NULL;
 	if (!(mass = (char*)malloc(sizeof(char) * ((*count) + (*count2) + 2))))
@@ -134,6 +94,11 @@ char	*create_mass(intmax_t *befor, int *count, int *count2, int *temp)
 		*count2 += 1;
 		*count += 1;
 		mass[0] = '-';
+	}
+	if (*befor == 0)
+	{
+		mass[0] = '0';
+		*count2 -= 1;
 	}
 	*temp = *count;
 	mass[*count] = '.';
@@ -149,6 +114,8 @@ char	*save_digit(intmax_t *befor, uintmax_t *after, int count, int count2)
 	temp = 0;
 	if (!(mass = create_mass(befor, &count, &count2, &temp)))
 		return (NULL);
+	if (count2 == 3)
+		*after += 1;
 	while (count - 1 >= 0 && *befor != 0)
 	{
 		mass[count - 1] = (*befor % 10) + '0';

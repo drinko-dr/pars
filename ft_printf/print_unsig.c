@@ -6,7 +6,7 @@
 /*   By: drinko <drinko@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/22 21:50:37 by drinko            #+#    #+#             */
-/*   Updated: 2019/10/24 23:37:13 by drinko           ###   ########.fr       */
+/*   Updated: 2019/11/02 00:54:08 by drinko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int			print_uposition(uintmax_t num, t_flag **flag, int base)
 	}
 	return (len);
 }
+
 int			print_ubase(uintmax_t num, int base, t_flag *flag)
 {
 	int		n;
@@ -53,6 +54,7 @@ int			print_ubase(uintmax_t num, int base, t_flag *flag)
 	write(1, &num, 1);
 	return (n);
 }
+
 int			print_unum(uintmax_t num, t_flag *flag, int base)
 {
 	int		len;
